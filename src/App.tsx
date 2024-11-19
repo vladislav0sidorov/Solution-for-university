@@ -1,22 +1,26 @@
-// 1_3_1 Convert some HTML to JSX
+// 1_4_1 Fix the mistake
 /*
-  Этот HTML был вставлен в компонент, но это не корректный JSX. Исправьте его.
+  Исправьте ошибку в коде.
 */
+
+const person = {
+  name: 'Gregorio Y. Zara',
+  theme: {
+    backgroundColor: 'black',
+    color: 'pink'
+  }
+}
 
 export default function App() {
   return (
-    <>
-      <div className="intro">
-        <h1>Welcome to my website!</h1>
-      </div>
-      <p className="summary">
-        You can find my thoughts here.
-        <br />
-        <b>
-          And <i>pictures</i>
-        </b>{' '}
-        of scientists!
-      </p>
-    </>
+    <div style={person.theme}>
+      <h1>{person.name}'s Todos</h1>
+      <img className="avatar" src="https://i.imgur.com/7vQD0fPs.jpg" alt="Gregorio Y. Zara" />
+      <ul>
+        <li>Improve the videophone</li>
+        <li>Prepare aeronautics lectures</li>
+        <li>Work on the alcohol-fuelled engine</li>
+      </ul>
+    </div>
   )
 }
