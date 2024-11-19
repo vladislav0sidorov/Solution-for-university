@@ -1,10 +1,8 @@
-// Исправьте ошибку с импортом компонентов
+// 1_1_2 Fix the return statement
+/*
+  Исправьте ошибку в операторе return
+*/
 
-export function App() {
-  return (
-      <img
-          src="https://i.imgur.com/lICfvbD.jpg"
-          alt="Aklilu Lemma"
-      />
-  );
+export default function Profile() {
+  return <img src="https://i.imgur.com/jA8hHMpm.jpg" alt="Katsuko Saruhashi" />
 }
