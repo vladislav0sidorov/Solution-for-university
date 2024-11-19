@@ -1,25 +1,8 @@
-// 1_1_3 Spot the mistake
+// 1_1_4 Your own component
 /*
-  Исправьте ошибку в компоненте Profile.
-  Вспомните, как react отличает компоненты от обычных HTML-тегов.
+Напишите компонент с нуля. Вы можете дать ему любое допустимое имя и вернуть любую разметку. Если у вас нет идей, вы можете написать компонент Congratulations, который показывает <h1>Хорошая работа!</h1>. Не забудьте экспортировать это!
 */
 
-function Profile() {
-  return (
-    <img
-      src="https://i.imgur.com/QIrZWGIs.jpg"
-      alt="Alan L. Hart"
-    />
-  );
-}
-
-export default function Gallery() {
-  return (
-    <section>
-      <h1>Amazing scientists</h1>
-      <Profile />
-      <Profile />
-      <Profile />
-    </section>
-  );
+export const HelloWorld = () => {
+  return <h1>Привет, Мир!</h1>;
 }
