@@ -1,31 +1,44 @@
-// 1_4_3 Write an expression inside JSX curly braces
+// 1_5_1 Extract a component
 /*
-  В приведенном ниже объекте полный URL изображения разделен на четыре части: базовый URL, imageId, imageSize и расширение файла.
-
-  Исправьте ошибку с заданием src в <img>.
+  Компонент Gallery содержит очень похожую разметку для двух профилей. Извлеките из него компонент Profile, чтобы уменьшить дублирование кода. Для этого нужно будет определить props для компонента Profile.
 */
 
-const baseUrl = 'https://i.imgur.com/'
-const person = {
-  name: 'Gregorio Y. Zara',
-  imageId: '7vQD0fP',
-  imageSize: 's',
-  theme: {
-    backgroundColor: 'black',
-    color: 'pink'
+import { Profile } from './Profile'
+
+const list = [
+  {
+    name: 'Maria Skłodowska-Curie',
+    urlHash: 'szV5sdG',
+    profession: 'physicist and chemist',
+    awardsCount: 4,
+    awards: '(Nobel Prize in Physics, Nobel Prize in Chemistry, Davy Medal, Matteucci Medal)',
+    discovered: 'polonium (chemical element)'
+  },
+  {
+    name: 'Katsuko Saruhashi',
+    urlHash: 'YfeOqp2',
+    profession: 'geochemist',
+    awardsCount: 2,
+    awards: '(Miyake Prize for geochemistry, Tanaka Prize)',
+    discovered: 'a method for measuring carbon dioxide in seawater'
   }
-}
+]
 
 export default function TodoList() {
   return (
-    <div style={person.theme}>
-      <h1>{person.name}'s Todos</h1>
-      <img className="avatar" src={`${baseUrl}${person.imageId}${person.imageSize}.jpg`} alt={person.name} />
-      <ul>
-        <li>Improve the videophone</li>
-        <li>Prepare aeronautics lectures</li>
-        <li>Work on the alcohol-fuelled engine</li>
-      </ul>
+    <div>
+      <h1>Notable Scientists</h1>
+      {list.map(profile => (
+        <Profile
+          key={profile.urlHash}
+          name={profile.name}
+          urlHash={profile.urlHash}
+          profession={profile.profession}
+          awardsCount={profile.awardsCount}
+          awards={profile.awards}
+          discovered={profile.discovered}
+        />
+      ))}
     </div>
   )
 }
