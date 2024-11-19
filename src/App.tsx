@@ -1,44 +1,29 @@
-// 1_5_1 Extract a component
+// 1_5_2 Adjust the image size based on a prop
 /*
-  Компонент Gallery содержит очень похожую разметку для двух профилей. Извлеките из него компонент Profile, чтобы уменьшить дублирование кода. Для этого нужно будет определить props для компонента Profile.
+  В этом примере Avatar получает числовой параметр size, который определяет ширину и высоту <img>. В данном примере параметр size установлен на 40. Однако если вы откроете изображение в новой вкладке, вы заметите, что само изображение больше (160 пикселей). Реальный размер изображения определяется тем, какой размер миниатюры вы запрашиваете.
+
+  Измените компонент Avatar, чтобы он запрашивал наиболее близкий размер изображения на основе параметра size. В частности, если size меньше 90, передавайте 's' ("small"), а не 'b' ("big") в функцию getImageUrl. Проверьте, что ваши изменения работают, отобразив аватары с разными значениями параметра size и открыв изображения в новой вкладке.
 */
 
-import { Profile } from './Profile'
+import { getImageUrl } from './util'
 
-const list = [
-  {
-    name: 'Maria Skłodowska-Curie',
-    urlHash: 'szV5sdG',
-    profession: 'physicist and chemist',
-    awardsCount: 4,
-    awards: '(Nobel Prize in Physics, Nobel Prize in Chemistry, Davy Medal, Matteucci Medal)',
-    discovered: 'polonium (chemical element)'
-  },
-  {
-    name: 'Katsuko Saruhashi',
-    urlHash: 'YfeOqp2',
-    profession: 'geochemist',
-    awardsCount: 2,
-    awards: '(Miyake Prize for geochemistry, Tanaka Prize)',
-    discovered: 'a method for measuring carbon dioxide in seawater'
-  }
-]
+export type Person = {
+  name: string
+  imageId: string
+}
 
-export default function TodoList() {
+function Avatar({ person, size }: { person: Person; size: number }) {
+  return <img className="avatar" src={getImageUrl(person.imageId, size < 90 ? 's' : 'b')} alt={person.name} width={size} height={size} />
+}
+
+export default function Profile() {
   return (
-    <div>
-      <h1>Notable Scientists</h1>
-      {list.map(profile => (
-        <Profile
-          key={profile.urlHash}
-          name={profile.name}
-          urlHash={profile.urlHash}
-          profession={profile.profession}
-          awardsCount={profile.awardsCount}
-          awards={profile.awards}
-          discovered={profile.discovered}
-        />
-      ))}
-    </div>
+    <Avatar
+      size={40}
+      person={{
+        name: 'Gregorio Y. Zara',
+        imageId: '7vQD0fP'
+      }}
+    />
   )
 }

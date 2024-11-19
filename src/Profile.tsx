@@ -1,4 +1,4 @@
-import { getImageUrl } from './utils'
+import { getImageUrl } from './util'
 
 interface ProfileProps {
   name: string
