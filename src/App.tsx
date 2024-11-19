@@ -5,25 +5,19 @@
   Измените компонент Avatar, чтобы он запрашивал наиболее близкий размер изображения на основе параметра size. В частности, если size меньше 90, передавайте 's' ("small"), а не 'b' ("big") в функцию getImageUrl. Проверьте, что ваши изменения работают, отобразив аватары с разными значениями параметра size и открыв изображения в новой вкладке.
 */
 
-import { getImageUrl } from './util'
-
-export type Person = {
-  name: string
-  imageId: string
-}
-
-function Avatar({ person, size }: { person: Person; size: number }) {
-  return <img className="avatar" src={getImageUrl(person.imageId, size < 90 ? 's' : 'b')} alt={person.name} width={size} height={size} />
-}
+import { Card } from './Card'
 
 export default function Profile() {
   return (
-    <Avatar
-      size={40}
-      person={{
-        name: 'Gregorio Y. Zara',
-        imageId: '7vQD0fP'
-      }}
-    />
+    <div>
+      <Card>
+        <h1>Photo</h1>
+        <img className="avatar" src="https://i.imgur.com/OKS67lhm.jpg" alt="Aklilu Lemma" width={70} height={70} />
+      </Card>
+      <Card>
+        <h1>About</h1>
+        <p>Aklilu Lemma was a distinguished Ethiopian scientist who discovered a natural treatment to schistosomiasis.</p>
+      </Card>
+    </div>
   )
 }
