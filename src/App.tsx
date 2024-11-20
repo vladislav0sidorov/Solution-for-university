@@ -1,23 +1,25 @@
-// 1_5_2 Adjust the image size based on a prop
+// 1_6_1 Show an icon for incomplete items with ? :
 /*
-  В этом примере Avatar получает числовой параметр size, который определяет ширину и высоту <img>. В данном примере параметр size установлен на 40. Однако если вы откроете изображение в новой вкладке, вы заметите, что само изображение больше (160 пикселей). Реальный размер изображения определяется тем, какой размер миниатюры вы запрашиваете.
-
-  Измените компонент Avatar, чтобы он запрашивал наиболее близкий размер изображения на основе параметра size. В частности, если size меньше 90, передавайте 's' ("small"), а не 'b' ("big") в функцию getImageUrl. Проверьте, что ваши изменения работают, отобразив аватары с разными значениями параметра size и открыв изображения в новой вкладке.
+  Используйте условный оператор (cond ? a : b) для отображения ❌, если isPacked не является true.
 */
 
-import { Card } from './Card'
+function Item({ name, isPacked }: { name: string; isPacked: boolean }) {
+  return (
+    <li className="item">
+      {name} {isPacked ? '✔' : '❌'}
+    </li>
+  )
+}
 
 export default function Profile() {
   return (
-    <div>
-      <Card>
-        <h1>Photo</h1>
-        <img className="avatar" src="https://i.imgur.com/OKS67lhm.jpg" alt="Aklilu Lemma" width={70} height={70} />
-      </Card>
-      <Card>
-        <h1>About</h1>
-        <p>Aklilu Lemma was a distinguished Ethiopian scientist who discovered a natural treatment to schistosomiasis.</p>
-      </Card>
-    </div>
+    <section>
+      <h1>Sally Ride's Packing List</h1>
+      <ul>
+        <Item isPacked={true} name="Space suit" />
+        <Item isPacked={true} name="Helmet with a golden leaf" />
+        <Item isPacked={false} name="Photo of Tam" />
+      </ul>
+    </section>
   )
 }
