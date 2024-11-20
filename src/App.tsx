@@ -1,4 +1,4 @@
-// 2_5_2 Implement the state queue yourself
+// 2_5_1 Fix a request counter
 /*
     В этом задании вам предстоит реализовать крошечную часть React с нуля! Это не так сложно, как кажется.
 
@@ -8,49 +8,30 @@
 
     Ваша задача — вернуть конечное состояние, точно такое же, как в тестах на странице с результатом работы программы!
 */
-import { getFinalState } from './processQueue'
+import { useState } from 'react'
 
-export type Que = number | ((n: number) => number)
+export default function RequestTracker() {
+  const [pending, setPending] = useState(0)
+  const [completed, setCompleted] = useState(0)
 
-function increment(n: number) {
-  return n + 1
-}
-increment.toString = () => 'n => n+1'
+  async function handleClick() {
+    setPending(p => p + 1)
+    await delay(3000)
+    setPending(p => p - 1)
+    setCompleted(c => c + 1)
+  }
 
-export default function App() {
   return (
     <>
-      <TestCase baseState={0} queue={[1, 1, 1]} expected={1} />
-      <hr />
-      <TestCase baseState={0} queue={[increment, increment, increment]} expected={3} />
-      <hr />
-      <TestCase baseState={0} queue={[5, increment]} expected={6} />
-      <hr />
-      <TestCase baseState={0} queue={[5, increment, 42]} expected={42} />
+      <h3>Отложенные: {pending}</h3>
+      <h3>Выполненные: {completed}</h3>
+      <button onClick={handleClick}>Купить</button>
     </>
   )
 }
 
-function TestCase({ baseState, queue, expected }: { baseState: number; queue: Que[]; expected: number }) {
-  const actual = getFinalState(baseState, queue)
-  return (
-    <>
-      <p>
-        Base state: <b>{baseState}</b>
-      </p>
-      <p>
-        Queue: <b>[{queue.join(', ')}]</b>
-      </p>
-      <p>
-        Expected result: <b>{expected}</b>
-      </p>
-      <p
-        style={{
-          color: actual === expected ? 'green' : 'red'
-        }}
-      >
-        Your result: <b>{actual}</b> ({actual === expected ? 'correct' : 'wrong'})
-      </p>
-    </>
-  )
+function delay(ms: number) {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
 }
