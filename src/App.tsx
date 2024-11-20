@@ -1,20 +1,50 @@
-// 1_8_3 Fix a broken story tray
+// 2_1_2 Wire up the events
 /*
-  Генеральный директор вашей компании просит вас добавить "истории" в ваше приложение онлайн-часов, и вы не можете отказать. Вы написали компонент StoryTray, который принимает список stories, за которым следует заполнитель "Create Story".
+  Этот компонент ColorSwitch отображает кнопку. Он должен менять цвет страницы. Подключите его к обработчику события onChangeColor, который он получает от родителя, чтобы щелчок по кнопке изменил цвет.
 
-  Вы реализовали заполнитель "Create Story", поместив еще одну фальшивую историю в конец массива stories, который вы получаете в качестве пропса. Но по какой-то причине "Create Story" появляется более одного раза. Исправьте эту проблему.
+  После того, как вы это сделаете, обратите внимание, что нажатие на кнопку также увеличивает счетчик нажатий на страницу. Ваш коллега, написавший родительский компонент, настаивает, что onChangeColor не увеличивает никаких счетчиков. Что еще может происходить? Исправьте это так, чтобы нажатие на кнопку только изменяло цвет и не увеличивало счетчик.
 */
 
-export default function LightSwitch() {
-  function handleClick() {
-    const bodyStyle = document.body.style
+import { useState } from 'react'
 
-    if (bodyStyle.backgroundColor === 'black') {
-      bodyStyle.backgroundColor = 'white'
-    } else {
-      bodyStyle.backgroundColor = 'black'
-    }
+function ColorSwitch({ onChangeColor }: { onChangeColor: () => void }) {
+  return (
+    <button
+      onClick={e => {
+        e.stopPropagation()
+        onChangeColor()
+      }}
+    >
+      Change color
+    </button>
+  )
+}
+
+export default function App() {
+  const [clicks, setClicks] = useState(0)
+
+  function handleClickOutside() {
+    setClicks(c => c + 1)
   }
 
-  return <button onClick={handleClick}>Toggle the lights</button>
+  function getRandomLightColor() {
+    const r = 150 + Math.round(100 * Math.random())
+    const g = 150 + Math.round(100 * Math.random())
+    const b = 150 + Math.round(100 * Math.random())
+    return `rgb(${r}, ${g}, ${b})`
+  }
+
+  function handleChangeColor() {
+    const bodyStyle = document.body.style
+    bodyStyle.backgroundColor = getRandomLightColor()
+  }
+
+  return (
+    <div style={{ width: '100%', height: '100%' }} onClick={handleClickOutside}>
+      <ColorSwitch onChangeColor={handleChangeColor} />
+      <br />
+      <br />
+      <h2>Clicks on the page: {clicks}</h2>
+    </div>
+  )
 }
