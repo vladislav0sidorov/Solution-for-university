@@ -1,50 +1,53 @@
-// 2_1_2 Wire up the events
+// 2_2_1 Complete the gallery
 /*
-  Этот компонент ColorSwitch отображает кнопку. Он должен менять цвет страницы. Подключите его к обработчику события onChangeColor, который он получает от родителя, чтобы щелчок по кнопке изменил цвет.
+  При нажатии кнопки "Next" на последней скульптуре происходит сбой кода. Исправьте логику, чтобы предотвратить сбой. Вы можете сделать это, добавив дополнительную логику в обработчик события или отключив кнопку, когда действие невозможно.
 
-  После того, как вы это сделаете, обратите внимание, что нажатие на кнопку также увеличивает счетчик нажатий на страницу. Ваш коллега, написавший родительский компонент, настаивает, что onChangeColor не увеличивает никаких счетчиков. Что еще может происходить? Исправьте это так, чтобы нажатие на кнопку только изменяло цвет и не увеличивало счетчик.
+  После устранения сбоя добавьте кнопку "Предыдущая", которая показывает предыдущую скульптуру. Она не должна разбиваться на первой скульптуре.
 */
 
 import { useState } from 'react'
 
-function ColorSwitch({ onChangeColor }: { onChangeColor: () => void }) {
+import { sculptureList } from './data'
+
+export default function Gallery() {
+  const [index, setIndex] = useState(0)
+  const [showMore, setShowMore] = useState(false)
+
+  function handleNextClick() {
+    if (index < sculptureList.length - 1) {
+      setIndex(index + 1)
+    }
+  }
+
+  function handlePrevClick() {
+    if (index > 0) {
+      setIndex(index - 1)
+    }
+  }
+
+  function handleMoreClick() {
+    setShowMore(!showMore)
+  }
+
+  const sculpture = sculptureList[index]
   return (
-    <button
-      onClick={e => {
-        e.stopPropagation()
-        onChangeColor()
-      }}
-    >
-      Change color
-    </button>
-  )
-}
-
-export default function App() {
-  const [clicks, setClicks] = useState(0)
-
-  function handleClickOutside() {
-    setClicks(c => c + 1)
-  }
-
-  function getRandomLightColor() {
-    const r = 150 + Math.round(100 * Math.random())
-    const g = 150 + Math.round(100 * Math.random())
-    const b = 150 + Math.round(100 * Math.random())
-    return `rgb(${r}, ${g}, ${b})`
-  }
-
-  function handleChangeColor() {
-    const bodyStyle = document.body.style
-    bodyStyle.backgroundColor = getRandomLightColor()
-  }
-
-  return (
-    <div style={{ width: '100%', height: '100%' }} onClick={handleClickOutside}>
-      <ColorSwitch onChangeColor={handleChangeColor} />
-      <br />
-      <br />
-      <h2>Clicks on the page: {clicks}</h2>
-    </div>
+    <>
+      <button onClick={handlePrevClick} disabled={index === 0}>
+        Previous
+      </button>
+      <button onClick={handleNextClick} disabled={index === sculptureList.length - 1}>
+        Next
+      </button>
+      <h2>
+        <i>{sculpture.name} </i>
+        by {sculpture.artist}
+      </h2>
+      <h3>
+        ({index + 1} of {sculptureList.length})
+      </h3>
+      <button onClick={handleMoreClick}>{showMore ? 'Hide' : 'Show'} details</button>
+      {showMore && <p>{sculpture.description}</p>}
+      <img src={sculpture.url} alt={sculpture.alt} />
+    </>
   )
 }
