@@ -1,36 +1,35 @@
-// 1_7_3 Extracting a list item component
+// 1_7_4 List with a separator
 /*
-  Создайте список рецептов из этого массива! Для каждого рецепта в массиве выведите его название в виде <h2> и список ингредиентов в виде <ul>. Это потребует вложения двух различных вызовов map.
+Этот пример отображает знаменитое хайку Кацусики Хокусая, каждая строка которого обернута в тег <p>. Ваша задача — вставить разделитель <hr /> между каждым абзацем. Ваша результирующая структура должна выглядеть следующим образом:
+
+<article>
+    <p>I write, erase, rewrite</p>
+    <hr />
+    <p>Erase again, and then</p>
+    <hr />
+    <p>A poppy blooms.</p>
+</article>
+
+  В хайку всего три строки, но ваше решение должно работать с любым количеством строк. Обратите внимание, что элементы <hr /> появляются только между элементами <p>, а не в начале или конце!
+
+  Это редкий случай, когда индекс в качестве ключа допустим, потому что строки стихотворения никогда не будут перестраиваться.
 */
 
-import { recipes } from './data'
+import { Fragment } from 'react/jsx-runtime'
 
-interface RecipeProps {
-  id: string
-  name: string
-  ingredients: string[]
-}
-
-function Recipe({ name, ingredients }: RecipeProps) {
-  return (
-    <div>
-      <h2>{name}</h2>
-      <ul>
-        {ingredients.map((ingredient: string) => (
-          <li key={ingredient}>{ingredient}</li>
-        ))}
-      </ul>
-    </div>
-  )
+const poem = {
+  lines: ['I write, erase, rewrite', 'Erase again, and then', 'A poppy blooms.']
 }
 
 export default function RecipeList() {
   return (
-    <div>
-      <h1>Recipes</h1>
-      {recipes.map(recipe => (
-        <Recipe key={recipe.id} id={recipe.id} name={recipe.name} ingredients={recipe.ingredients} />
+    <article>
+      {poem.lines.map((line, index) => (
+        <Fragment key={index}>
+          <p>{line}</p>
+          {index < poem.lines.length - 1 && <hr />}
+        </Fragment>
       ))}
-    </div>
+    </article>
   )
 }
