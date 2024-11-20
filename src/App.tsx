@@ -1,4 +1,4 @@
-// 2_5_1 Fix a request counter
+// 2_6_1 Fix incorrect state updates
 /*
     В этом задании вам предстоит реализовать крошечную часть React с нуля! Это не так сложно, как кажется.
 
@@ -8,30 +8,52 @@
 
     Ваша задача — вернуть конечное состояние, точно такое же, как в тестах на странице с результатом работы программы!
 */
-import { useState } from 'react'
 
-export default function RequestTracker() {
-  const [pending, setPending] = useState(0)
-  const [completed, setCompleted] = useState(0)
+import { useState, ChangeEvent } from 'react'
 
-  async function handleClick() {
-    setPending(p => p + 1)
-    await delay(3000)
-    setPending(p => p - 1)
-    setCompleted(c => c + 1)
+export default function Scoreboard() {
+  const [player, setPlayer] = useState({
+    firstName: 'Ranjani',
+    lastName: 'Shettar',
+    score: 10
+  })
+
+  function handlePlusClick() {
+    // Используем setPlayer для иммутабельного обновления состояния
+    setPlayer({
+      ...player,
+      score: player.score + 1
+    })
+  }
+
+  function handleFirstNameChange(e: ChangeEvent<HTMLInputElement>) {
+    setPlayer({
+      ...player,
+      firstName: e.target.value
+    })
+  }
+
+  function handleLastNameChange(e: ChangeEvent<HTMLInputElement>) {
+    // Добавляем spread оператор чтобы сохранить все поля
+    setPlayer({
+      ...player,
+      lastName: e.target.value
+    })
   }
 
   return (
     <>
-      <h3>Отложенные: {pending}</h3>
-      <h3>Выполненные: {completed}</h3>
-      <button onClick={handleClick}>Купить</button>
+      <label>
+        Score: <b>{player.score}</b> <button onClick={handlePlusClick}>+1</button>
+      </label>
+      <label>
+        First name:
+        <input value={player.firstName} onChange={handleFirstNameChange} />
+      </label>
+      <label>
+        Last name:
+        <input value={player.lastName} onChange={handleLastNameChange} />
+      </label>
     </>
   )
-}
-
-function delay(ms: number) {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms)
-  })
 }
