@@ -5,30 +5,16 @@
   Вы реализовали заполнитель "Create Story", поместив еще одну фальшивую историю в конец массива stories, который вы получаете в качестве пропса. Но по какой-то причине "Create Story" появляется более одного раза. Исправьте эту проблему.
 */
 
-export interface Story {
-  id: string
-  label: string
-}
+export default function LightSwitch() {
+  function handleClick() {
+    const bodyStyle = document.body.style
 
-const stories: Story[] = []
-export default function Wrapper() {
-  return <StoryTray stories={stories} />
-}
-
-function StoryTray({ stories }: { stories: Story[] }) {
-  const storiesWithCreate = [
-    ...stories,
-    {
-      id: 'create',
-      label: 'Create Story'
+    if (bodyStyle.backgroundColor === 'black') {
+      bodyStyle.backgroundColor = 'white'
+    } else {
+      bodyStyle.backgroundColor = 'black'
     }
-  ]
+  }
 
-  return (
-    <ul>
-      {storiesWithCreate.map(story => (
-        <li key={story.id}>{story.label}</li>
-      ))}
-    </ul>
-  )
+  return <button onClick={handleClick}>Toggle the lights</button>
 }
