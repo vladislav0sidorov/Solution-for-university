@@ -1,59 +1,57 @@
-// 2_6_1 Fix incorrect state updates
+// 2_6_2 Find and fix the mutation
 /*
-    В этом задании вам предстоит реализовать крошечную часть React с нуля! Это не так сложно, как кажется.
+    Имеется перетаскиваемый ящик на статичном фоне. Вы можете изменить цвет поля с помощью кнопки select.
 
-    Посмотрите результат работы программы. Обратите внимание, что в ней показаны четыре тестовых случая. Они соответствуют примерам, которые вы видели ранее на этой странице. Ваша задача — реализовать функцию getFinalState так, чтобы она возвращала правильный результат для каждого из этих случаев. Если вы реализуете функцию правильно, все четыре теста должны пройти.
+    Но есть ошибка. Если сначала переместить ящик, а затем изменить его цвет, фон (который не должен двигаться!) "перепрыгнет" на позицию ящика. Но этого не должно произойти: параметр position у Background установлен в initialPosition, что равно { x: 0, y: 0 }. Почему фон перемещается после изменения цвета?
 
-    Вы получите два аргумента: baseState — начальное состояние (например, 0), и queue — массив, содержащий смесь чисел (например, 5) и функций обновления (например, n => n + 1) в порядке их добавления.
-
-    Ваша задача — вернуть конечное состояние, точно такое же, как в тестах на странице с результатом работы программы!
+    Найдите ошибку и исправьте ее.
 */
 
 import { useState, ChangeEvent } from 'react'
+import Background from './Background'
+import Box from './Box'
 
-export default function Scoreboard() {
-  const [player, setPlayer] = useState({
-    firstName: 'Ranjani',
-    lastName: 'Shettar',
-    score: 10
+export type Position = { x: number; y: number }
+
+const initialPosition = {
+  x: 0,
+  y: 0
+}
+
+export default function Canvas() {
+  const [shape, setShape] = useState({
+    color: 'orange',
+    position: initialPosition
   })
 
-  function handlePlusClick() {
-    // Используем setPlayer для иммутабельного обновления состояния
-    setPlayer({
-      ...player,
-      score: player.score + 1
+  function handleMove(dx: number, dy: number) {
+    setShape({
+      ...shape,
+      position: {
+        x: shape.position.x + dx,
+        y: shape.position.y + dy
+      }
     })
   }
 
-  function handleFirstNameChange(e: ChangeEvent<HTMLInputElement>) {
-    setPlayer({
-      ...player,
-      firstName: e.target.value
-    })
-  }
-
-  function handleLastNameChange(e: ChangeEvent<HTMLInputElement>) {
-    // Добавляем spread оператор чтобы сохранить все поля
-    setPlayer({
-      ...player,
-      lastName: e.target.value
+  function handleColorChange(e: ChangeEvent<HTMLSelectElement>) {
+    setShape({
+      ...shape,
+      color: e.target.value
     })
   }
 
   return (
     <>
-      <label>
-        Score: <b>{player.score}</b> <button onClick={handlePlusClick}>+1</button>
-      </label>
-      <label>
-        First name:
-        <input value={player.firstName} onChange={handleFirstNameChange} />
-      </label>
-      <label>
-        Last name:
-        <input value={player.lastName} onChange={handleLastNameChange} />
-      </label>
+      <select value={shape.color} onChange={handleColorChange}>
+        <option value="orange">orange</option>
+        <option value="lightpink">lightpink</option>
+        <option value="aliceblue">aliceblue</option>
+      </select>
+      <Background position={initialPosition} />
+      <Box color={shape.color} position={shape.position} onMove={handleMove}>
+        Drag me!
+      </Box>
     </>
   )
 }
