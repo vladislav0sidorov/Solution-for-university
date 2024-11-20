@@ -1,32 +1,53 @@
-// 1_6_2 Show the item importance with &&
+// 1_7_1 Splitting a list in two
 /*
-В этом примере каждый Item получает числовой параметр importance. Используйте оператор &&, чтобы отобразить "(Важность: X)" курсивом, но только для тех элементов, которые имеют ненулевую важность. В итоге ваш список предметов должен выглядеть следующим образом:
+  В этом примере показан список всех людей.
 
-- Космический скафандр (Важность: 9).
-- Шлем с золотым листом
-- Фотография Тама (Важность: 6)
-
-Не забудьте добавить пробел между двумя метками!
+  Измените его, чтобы последовательно вывести два отдельных списка: Химики и Все остальные. Как и ранее, вы можете определить, является ли человек химиком, проверив, что person.profession === 'chemist'.
 */
 
-function Item({ name, importance }: { name: string; importance: number }) {
-  return (
-    <li className="item">
-      {name}
-      {importance > 0 && <em> (Важность: {importance})</em>}
-    </li>
-  )
+import { people } from './data.js'
+import { getImageUrl } from './util.js'
+
+export type Person = {
+  id: number
+  name: string
+  profession: string
+  accomplishment: string
+  imageId: string
 }
 
-export default function PackingList() {
+export default function List() {
+  const chemists = people.filter(person => person.profession === 'chemist')
+  const others = people.filter(person => person.profession !== 'chemist')
+
+  const chemistItems = chemists.map(person => (
+    <li key={person.id}>
+      <img src={getImageUrl(person)} alt={person.name} />
+      <p>
+        <b>{person.name}:</b>
+        {' ' + person.profession + ' '}
+        known for {person.accomplishment}
+      </p>
+    </li>
+  ))
+
+  const otherItems = others.map(person => (
+    <li key={person.id}>
+      <img src={getImageUrl(person)} alt={person.name} />
+      <p>
+        <b>{person.name}:</b>
+        {' ' + person.profession + ' '}
+        known for {person.accomplishment}
+      </p>
+    </li>
+  ))
+
   return (
-    <section>
-      <h1>Sally Ride's Packing List</h1>
-      <ul>
-        <Item importance={9} name="Space suit" />
-        <Item importance={0} name="Helmet with a golden leaf" />
-        <Item importance={6} name="Photo of Tam" />
-      </ul>
-    </section>
+    <article>
+      <h1>Chemists</h1>
+      <ul>{chemistItems}</ul>
+      <h1>All Others</h1>
+      <ul>{otherItems}</ul>
+    </article>
   )
 }

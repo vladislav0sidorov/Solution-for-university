@@ -1,8 +1,7 @@
-export function getImageUrl(imageId: string, size = 's') {
-  return (
-    'http://localhost:5173/' +
-    imageId +
-    size +
-    '.jpg'
-  );
+import { Person } from "./App";
+
+export function getImageUrl(person: Person) {
+    return (
+        'https://i.imgur.com/' + person.imageId + 's.jpg'
+    );
 }
