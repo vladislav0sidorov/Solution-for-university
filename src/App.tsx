@@ -1,24 +1,31 @@
-// 1_6_1 Show an icon for incomplete items with ? :
+// 1_6_2 Show the item importance with &&
 /*
-  Используйте условный оператор (cond ? a : b) для отображения ❌, если isPacked не является true.
+В этом примере каждый Item получает числовой параметр importance. Используйте оператор &&, чтобы отобразить "(Важность: X)" курсивом, но только для тех элементов, которые имеют ненулевую важность. В итоге ваш список предметов должен выглядеть следующим образом:
+
+- Космический скафандр (Важность: 9).
+- Шлем с золотым листом
+- Фотография Тама (Важность: 6)
+
+Не забудьте добавить пробел между двумя метками!
 */
 
-function Item({ name, isPacked }: { name: string; isPacked: boolean }) {
+function Item({ name, importance }: { name: string; importance: number }) {
   return (
     <li className="item">
-      {name} {isPacked ? '✔' : '❌'}
+      {name}
+      {importance > 0 && <em> (Важность: {importance})</em>}
     </li>
   )
 }
 
-export default function Profile() {
+export default function PackingList() {
   return (
     <section>
       <h1>Sally Ride's Packing List</h1>
       <ul>
-        <Item isPacked={true} name="Space suit" />
-        <Item isPacked={true} name="Helmet with a golden leaf" />
-        <Item isPacked={false} name="Photo of Tam" />
+        <Item importance={9} name="Space suit" />
+        <Item importance={0} name="Helmet with a golden leaf" />
+        <Item importance={6} name="Photo of Tam" />
       </ul>
     </section>
   )
