@@ -1,35 +1,20 @@
-import { getImageUrl } from './util'
+import { useState } from 'react'
+import { Person } from './App'
+import { getImageUrl } from './utils'
 
-interface ProfileProps {
-  name: string
-  urlHash: string
-  profession: string
-  awardsCount: number
-  awards: string
-  discovered: string
-}
-
-export const Profile: React.FC<ProfileProps> = props => {
-  const { name, urlHash, profession, awardsCount, awards, discovered } = props
+export default function Profile({ person }: { person: Person }) {
+  const [isExpanded, setIsExpanded] = useState(true)
 
   return (
     <section className="profile">
-      <h2>{name}</h2>
-      <img className="avatar" src={getImageUrl(urlHash)} alt={name} width={70} height={70} />
-      <ul>
-        <li>
-          <b>Profession: </b>
-          {profession}
-        </li>
-        <li>
-          <b>Awards: {awardsCount} </b>
-          {awards}
-        </li>
-        <li>
-          <b>Discovered: </b>
-          {discovered}
-        </li>
-      </ul>
+      <h2>{person.name}</h2>
+      <img className="avatar" src={getImageUrl(person)} alt={person.name} />
+      {isExpanded && (
+        <p>
+          <i>{person.name} является лауреатом нобелевской премии.</i>
+        </p>
+      )}
+      <button onClick={() => setIsExpanded(!isExpanded)}>{isExpanded ? 'Свернуть' : 'Развернуть'}</button>
     </section>
   )
 }

@@ -1,22 +1,34 @@
-// 1_8_1 Fix a broken clock
+// 1_8_2 Fix a broken profile
 /*
-  Этот компонент пытается установить CSS-класс <h1> на night в период с полуночи до шести часов утра, и на day во все остальное время. Однако это не срабатывает. Можете ли вы исправить этот компонент?
+  Два компонента Profile отображаются бок о бок с разными данными. Нажмите "Свернуть" на первом профиле, а затем "Развернуть" его. Вы заметите, что теперь в обоих профилях отображается один и тот же человек. Это ошибка.
 
-  Вы можете проверить, работает ли ваше решение, временно изменив часовой пояс компьютера. Когда текущее время находится между полуночью и шестью часами утра, часы должны иметь инвертированные цвета!
+  Найдите причину ошибки и исправьте ее.
 
-  Рендеринг — это вычисление, он не должен пытаться "делать" вещи. Можете ли вы выразить ту же идею по-другому?
+  Код ошибки находится в файле Profile.js. Убедитесь, что вы прочитали его сверху вниз!
 */
 
-export default function ClockWrapper() {
-  return <Clock time={new Date()} />
+import Profile from './Profile'
+
+export type Person = {
+  imageId: string
+  name: string
 }
 
-function Clock({ time }: { time: Date }) {
-  const hours = time.getHours()
-  const className = hours >= 0 && hours <= 6 ? 'night' : 'day'
+export default function App() {
   return (
-    <h1 id="time" className={className}>
-      {time.toLocaleTimeString()}
-    </h1>
+    <>
+      <Profile
+        person={{
+          imageId: 'lrWQx8l',
+          name: 'Subrahmanyan Chandrasekhar'
+        }}
+      />
+      <Profile
+        person={{
+          imageId: 'MK3eW3A',
+          name: 'Creola Katherine Johnson'
+        }}
+      />
+    </>
   )
 }
