@@ -1,4 +1,4 @@
-// 2_6_2 Find and fix the mutation
+// 2_6_3 Update an object with Immer
 /*
     Имеется перетаскиваемый ящик на статичном фоне. Вы можете изменить цвет поля с помощью кнопки select.
 
@@ -7,7 +7,7 @@
     Найдите ошибку и исправьте ее.
 */
 
-import { useState, ChangeEvent } from 'react'
+import { useImmer } from 'use-immer'
 import Background from './Background'
 import Box from './Box'
 
@@ -19,25 +19,21 @@ const initialPosition = {
 }
 
 export default function Canvas() {
-  const [shape, setShape] = useState({
+  const [shape, setShape] = useImmer({
     color: 'orange',
     position: initialPosition
   })
 
   function handleMove(dx: number, dy: number) {
-    setShape({
-      ...shape,
-      position: {
-        x: shape.position.x + dx,
-        y: shape.position.y + dy
-      }
+    setShape(draft => {
+      draft.position.x += dx
+      draft.position.y += dy
     })
   }
 
-  function handleColorChange(e: ChangeEvent<HTMLSelectElement>) {
-    setShape({
-      ...shape,
-      color: e.target.value
+  function handleColorChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    setShape(draft => {
+      draft.color = e.target.value
     })
   }
 
