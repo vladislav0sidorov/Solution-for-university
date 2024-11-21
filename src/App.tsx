@@ -3,55 +3,55 @@
     В этом примере все обработчики событий в App.js используют мутацию. В результате редактирование и удаление todos не работает. Перепишите handleAddTodo, handleChangeTodo и handleDeleteTodo с помощью Immer
 */
 
-import { useImmer } from 'use-immer'
-import AddTodo from './AddTodo'
-import TaskList from './TaskList'
+import { useState, useContext } from 'react'
+import { places, PlaceType } from './data'
+import { getImageUrl } from './utils'
+import { ImageSizeContext } from './Context'
 
-export type Todo = {
-  id: number
-  title: string
-  done: boolean
-}
-
-let nextId = 3
-const initialTodos = [
-  { id: 0, title: 'Buy milk', done: true },
-  { id: 1, title: 'Eat tacos', done: false },
-  { id: 2, title: 'Brew tea', done: false }
-]
-
-export default function TaskApp() {
-  const [todos, setTodos] = useImmer(initialTodos)
-
-  function handleAddTodo(title: string) {
-    setTodos(draft => {
-      draft.push({
-        id: nextId++,
-        title: title,
-        done: false
-      })
-    })
-  }
-
-  function handleChangeTodo(nextTodo: Todo) {
-    setTodos(draft => {
-      const todo = draft.find(t => t.id === nextTodo.id)!
-      todo.title = nextTodo.title
-      todo.done = nextTodo.done
-    })
-  }
-
-  function handleDeleteTodo(todoId: number) {
-    setTodos(draft => {
-      const index = draft.findIndex(t => t.id === todoId)
-      draft.splice(index, 1)
-    })
-  }
+export default function App() {
+  const [isLarge, setIsLarge] = useState(false)
+  const imageSize = isLarge ? 150 : 100
 
   return (
+    <ImageSizeContext.Provider value={imageSize}>
+      <label>
+        <input
+          type="checkbox"
+          checked={isLarge}
+          onChange={e => {
+            setIsLarge(e.target.checked)
+          }}
+        />
+        Use large images
+      </label>
+      <hr />
+      <List />
+    </ImageSizeContext.Provider>
+  )
+}
+
+function List() {
+  const listItems = places.map(place => (
+    <li key={place.id}>
+      <Place place={place} />
+    </li>
+  ))
+  return <ul>{listItems}</ul>
+}
+
+function Place({ place }: { place: PlaceType }) {
+  return (
     <>
-      <AddTodo onAddTodo={handleAddTodo} />
-      <TaskList todos={todos} onChangeTodo={handleChangeTodo} onDeleteTodo={handleDeleteTodo} />
+      <PlaceImage place={place} />
+      <p>
+        <b>{place.name}</b>
+        {': ' + place.description}
+      </p>
     </>
   )
+}
+
+function PlaceImage({ place }: { place: PlaceType }) {
+  const imageSize = useContext(ImageSizeContext)
+  return <img src={getImageUrl(place)} alt={place.name} width={imageSize} height={imageSize} />
 }
