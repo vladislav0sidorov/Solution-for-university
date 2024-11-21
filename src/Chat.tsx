@@ -1,7 +1,12 @@
-import { Action } from './messengerReducer'
 import { Contact } from './App'
 
-export default function Chat({ contact, message, dispatch }: { contact: Contact; message: string; dispatch: (action: Action) => void }) {
+type ChatProps = {
+  contact: Contact
+  message: string
+  dispatch: React.Dispatch<any>
+}
+
+export default function Chat({ contact, message, dispatch }: ChatProps) {
   return (
     <section className="chat">
       <textarea
@@ -14,17 +19,6 @@ export default function Chat({ contact, message, dispatch }: { contact: Contact;
           })
         }}
       />
-      <br />
-      <button
-        onClick={() => {
-          alert(`Sending "${message}" to ${contact.email}`)
-          dispatch({
-            type: 'sent_message'
-          })
-        }}
-      >
-        Send to {contact.email}
-      </button>
     </section>
   )
 }
