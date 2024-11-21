@@ -1,4 +1,4 @@
-// 2_7_1 Update an item in the shopping cart
+// 2_7_2 Remove an item from the shopping cart
 /*
     Заполните логику handleIncreaseClick так, чтобы нажатие "+" увеличивало соответствующее число.
 */
@@ -34,9 +34,26 @@ export default function ShoppingCart() {
             ...product,
             count: product.count + 1
           }
+        } else {
+          return product
         }
-        return product
       })
+    )
+  }
+
+  function handleDecreaseClick(productId: number) {
+    setProducts(
+      products
+        .map(product => {
+          if (product.id === productId) {
+            return {
+              ...product,
+              count: product.count - 1
+            }
+          }
+          return product
+        })
+        .filter(product => product.count > 0)
     )
   }
 
@@ -52,6 +69,7 @@ export default function ShoppingCart() {
           >
             +
           </button>
+          <button onClick={() => handleDecreaseClick(product.id)}>–</button>
         </li>
       ))}
     </ul>
