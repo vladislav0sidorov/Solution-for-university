@@ -22,6 +22,7 @@ export default function ContactList({
                   contactId: contact.id
                 })
               }}
+              className={contact.id === selectedId ? 'selected' : ''}
             >
               {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
             </button>

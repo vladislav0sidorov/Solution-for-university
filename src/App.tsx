@@ -1,18 +1,20 @@
-//  3_5_2  Implement useReducer from scratch
+// 3_5_1 Dispatch actions from event handlers
 /*
-  В предыдущих примерах вы импортировали хук useReducer из React. В этот раз вам предстоит реализовать хук useReducer самостоятельно! Вот заглушка для начала работы. Он не должен занимать более 10 строк кода.
+  В настоящее время обработчики событий в ContactList и Chat имеют комментарии // TODO. Именно поэтому ввод текста не работает, а нажатие на кнопки не изменяет выбранного получателя.
 
-  Чтобы проверить свои изменения, попробуйте ввести текст в поле ввода или выбрать контакт.
+  Замените эти два // TODO на код для dispatch соответствующих действий. Чтобы увидеть ожидаемую форму и тип действий, проверьте reducer в messengerReducer.js. Reducer уже написан, поэтому вам не придется его изменять. Вам нужно только диспетчеризировать действия в ContactList и Chat.
+
+  PS. Не стоит искать смысла в этом приложении. Последнее отправленное сообщение хранится в состоянии и нигде не отображается.
 */
 
-import { useReducer } from './MyReact'
+import { useReducer } from 'react'
 import Chat from './Chat'
 import ContactList from './ContactList'
 import { initialState, messengerReducer } from './messengerReducer'
 
 export default function Messenger() {
   const [state, dispatch] = useReducer(messengerReducer, initialState)
-  const message = state.messages[state.selectedId]
+  const message = state.message
   const contact = contacts.find(c => c.id === state.selectedId)!
   return (
     <div>
