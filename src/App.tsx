@@ -1,36 +1,12 @@
-// 3_2_1 Fix a component that’s not updating
+// 3_1_3 Refactor the imperative solution without React
 /*
-    Компонент Clock получает два пропса: color и time. Когда вы выбираете другой цвет в поле выбора, компонент Clock получает другой пропс color от своего родительского компонента. Однако по какой-то причине отображаемый цвет не обновляется. Почему? Устраните проблему.
+    В проекте приведена форма, реализованная на чистом JavaScript.
+
+    Эта форма переключается между двумя режимами: в режиме редактирования вы видите вводимые данные, а в режиме просмотра - только результат. Метка кнопки меняется между "Редактировать" и "Сохранить" в зависимости от того, в каком режиме вы находитесь. Когда вы изменяете вводимые данные, приветственное сообщение внизу обновляется в режиме реального времени.
+
+    Представьте, что React не существует. Можете ли вы переделать код в index.js таким образом, чтобы сделать логику менее хрупкой и более похожей на версию React? Как бы это выглядело, если бы состояние было явным, как в React?
 */
 
-import { useState, useEffect } from 'react'
-import Clock from './Clock'
-
-function useTime() {
-  const [time, setTime] = useState(() => new Date())
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTime(new Date())
-    }, 1000)
-    return () => clearInterval(id)
-  }, [])
-  return time
-}
-
-export default function App() {
-  const time = useTime()
-  const [color, setColor] = useState('lightcoral')
-  return (
-    <div>
-      <p>
-        Pick a color:{' '}
-        <select value={color} onChange={e => setColor(e.target.value)}>
-          <option value="lightcoral">lightcoral</option>
-          <option value="midnightblue">midnightblue</option>
-          <option value="rebeccapurple">rebeccapurple</option>
-        </select>
-      </p>
-      <Clock color={color} time={time.toLocaleTimeString()} />
-    </div>
-  )
+export default function EditProfile() {
+  return <div></div>
 }
