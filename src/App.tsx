@@ -1,51 +1,29 @@
-// 3_3_2 Filtering a list
+// 3_3_1 Synced inputs
 /*
-  В этом примере SearchBar имеет собственное состояние query, которое управляет вводом текста. Его родительский компонент FilterableList отображает список элементов, но он не учитывает поисковый запрос.
-
-  Используйте функцию filterItems(foods, query) для фильтрации списка в соответствии с поисковым запросом. Чтобы проверить ваши изменения, проверьте, что ввод "s" в поле ввода отфильтровывает список до "Sushi", "Shish kebab" и "Dim sum".
-
-  Обратите внимание, что filterItems уже реализован и импортирован, поэтому вам не нужно писать его самостоятельно!
+  Эти два входа являются независимыми. Сделайте их синхронизированными: редактирование одного входа должно обновить другой вход с тем же текстом, и наоборот.
 */
 
 import { useState } from 'react'
-import { foods, filterItems, Item } from './data'
 
-export default function FilterableList() {
-  const [query, setQuery] = useState('')
-  const filteredItems = filterItems(foods, query)
+export default function SyncedInputs() {
+  const [inputValue, setInputValue] = useState('')
 
   return (
     <>
-      <SearchBar query={query} onChange={setQuery} />
-      <hr />
-      <List items={filteredItems} />
+      <Input onChange={setInputValue} value={inputValue} label="First input" />
+      <Input onChange={setInputValue} value={inputValue} label="Second input" />
     </>
   )
 }
 
-function SearchBar({ query, onChange }: { query: string; onChange: (query: string) => void }) {
+function Input({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
   function handleChange(e: any) {
     onChange(e.target.value)
   }
 
   return (
     <label>
-      Search: <input value={query} onChange={handleChange} />
+      {label} <input value={value} onChange={handleChange} />
     </label>
-  )
-}
-
-function List({ items }: { items: Item[] }) {
-  return (
-    <table>
-      <tbody>
-        {items.map(food => (
-          <tr key={food.id}>
-            <td>{food.name}</td>
-            <td>{food.description}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
   )
 }
