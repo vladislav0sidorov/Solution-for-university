@@ -3,11 +3,11 @@
   Когда вы нажимаете кнопку "Далее", браузер начинает загрузку следующего изображения. Однако, поскольку оно отображается в том же теге img, по умолчанию вы будете видеть предыдущее изображение, пока не загрузится следующее. Это может быть нежелательно, если важно, чтобы текст всегда совпадал с изображением. Измените это так, чтобы при нажатии кнопки "Next" предыдущее изображение сразу же убиралось.
 */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 export default function Gallery() {
   const [index, setIndex] = useState(0)
-  const [currentImageSrc, setCurrentImageSrc] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const hasNext = index < images.length - 1
 
   function handleClick() {
@@ -16,8 +16,18 @@ export default function Gallery() {
     } else {
       setIndex(0)
     }
-    setCurrentImageSrc(null)
+    setIsLoading(true)
   }
+
+  useEffect(() => {
+    if (isLoading) {
+      const img = new Image()
+      img.onload = () => {
+        setIsLoading(false)
+      }
+      img.src = images[index].src
+    }
+  }, [isLoading, index])
 
   const image = images[index]
   return (
@@ -26,8 +36,7 @@ export default function Gallery() {
       <h3>
         Image {index + 1} of {images.length}
       </h3>
-      <img src={image.src} style={{ display: 'none' }} onLoad={() => setCurrentImageSrc(image.src)} />
-      {currentImageSrc && <img src={currentImageSrc} alt={image.place} />}
+      {isLoading ? <p>Loading...</p> : <img src={isLoading ? '' : image.src} alt={image.place} />}
       <p>{image.place}</p>
     </>
   )
