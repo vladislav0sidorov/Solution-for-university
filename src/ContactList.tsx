@@ -1,28 +1,33 @@
 import { Contact } from './App'
+import { Action } from './messengerReducer'
 
-type ContactListProps = {
+export default function ContactList({
+  contacts,
+  selectedId,
+  dispatch
+}: {
   contacts: Contact[]
   selectedId: number
-  dispatch: React.Dispatch<any>
-}
-
-export default function ContactList({ contacts, selectedId, dispatch }: ContactListProps) {
+  dispatch: (action: Action) => void
+}) {
   return (
     <section className="contact-list">
-      {contacts.map(contact => (
-        <button
-          key={contact.id}
-          className={selectedId === contact.id ? 'selected' : ''}
-          onClick={() => {
-            dispatch({
-              type: 'selected_contact',
-              contactId: contact.id
-            })
-          }}
-        >
-          {contact.name}
-        </button>
-      ))}
+      <ul>
+        {contacts.map(contact => (
+          <li key={contact.id}>
+            <button
+              onClick={() => {
+                dispatch({
+                  type: 'changed_selection',
+                  contactId: contact.id
+                })
+              }}
+            >
+              {selectedId === contact.id ? <b>{contact.name}</b> : contact.name}
+            </button>
+          </li>
+        ))}
+      </ul>
     </section>
   )
 }
