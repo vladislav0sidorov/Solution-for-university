@@ -6,46 +6,63 @@
 */
 
 import { useState } from 'react'
-import { initialLetters, LetterType } from './data.js'
-import Letter from './Letter.js'
+import AddItem from './AddItem.js'
+import PackingList from './PackingList.js'
 
-export default function MailClient() {
-  const [letters, setLetters] = useState(initialLetters)
-  const [highlightedLetter, setHighlightedLetter] = useState<LetterType | null>(null)
+export type Item = {
+  id: number
+  title: string
+  packed: boolean
+}
 
-  function handleHover(letter: LetterType) {
-    setHighlightedLetter(letter)
+let nextId = 3
+const initialItems = [
+  { id: 0, title: 'Warm socks', packed: true },
+  { id: 1, title: 'Travel journal', packed: false },
+  { id: 2, title: 'Watercolors', packed: false }
+]
+
+export default function TravelPlan() {
+  const [items, setItems] = useState(initialItems)
+
+  function handleAddItem(title: string) {
+    setItems([
+      ...items,
+      {
+        id: nextId++,
+        title: title,
+        packed: false
+      }
+    ])
   }
 
-  function handleStar(starred: LetterType) {
-    setLetters(
-      letters.map(letter => {
-        if (letter.id === starred.id) {
-          return {
-            ...letter,
-            isStarred: !letter.isStarred
-          }
+  function handleChangeItem(nextItem: Item) {
+    setItems(
+      items.map(item => {
+        if (item.id === nextItem.id) {
+          return nextItem
         } else {
-          return letter
+          return item
         }
       })
     )
   }
 
+  function handleDeleteItem(itemId: number) {
+    setItems(items.filter(item => item.id !== itemId))
+  }
+
+  const total = items.length
+  const packed = items.filter(item => item.packed).length
+
   return (
     <>
-      <h2>Inbox</h2>
-      <ul>
-        {letters.map(letter => (
-          <Letter
-            key={letter.id}
-            letter={letter}
-            isHighlighted={highlightedLetter ? letter.id === highlightedLetter.id : false}
-            onHover={handleHover}
-            onToggleStar={handleStar}
-          />
-        ))}
-      </ul>
+      <AddItem onAddItem={handleAddItem} />
+      <PackingList items={items} onChangeItem={handleChangeItem} onDeleteItem={handleDeleteItem} />
+      <hr />
+      <b>
+        {packed} out of {total} packed!
+      </b>
     </>
   )
 }
