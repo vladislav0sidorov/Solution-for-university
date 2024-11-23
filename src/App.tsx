@@ -1,56 +1,65 @@
-// 3_4_5 Fix misplaced state in the list
+// 3_4_4 Clear an image while it’s loading
 /*
-  В этом списке каждый Contact имеет состояние, которое определяет, была ли для него нажата галочка "Показать почту". Нажмите "Показать почту" для Алисы, а затем установите флажок "Показывать в обратном порядке". Вы заметите, что письмо Тейлора теперь развернуто, а письмо Алисы, которое переместилось в самый низ, кажется свернутым.
-
-  Исправьте это так, чтобы развернутое состояние было связано с каждым контактом, независимо от выбранного порядка.
+  Когда вы нажимаете кнопку "Далее", браузер начинает загрузку следующего изображения. Однако, поскольку оно отображается в том же теге img, по умолчанию вы будете видеть предыдущее изображение, пока не загрузится следующее. Это может быть нежелательно, если важно, чтобы текст всегда совпадал с изображением. Измените это так, чтобы при нажатии кнопки "Next" предыдущее изображение сразу же убиралось.
 */
 
 import { useState } from 'react'
-import Contact from './Contact'
 
-export default function ContactList() {
-  const [reverse, setReverse] = useState(false)
-  const [expandedIds, setExpandedIds] = useState<number[]>([])
+export default function Gallery() {
+  const [index, setIndex] = useState(0)
+  const [currentImageSrc, setCurrentImageSrc] = useState<string | null>(null)
+  const hasNext = index < images.length - 1
 
-  const displayedContacts = [...contacts]
-  if (reverse) {
-    displayedContacts.reverse()
+  function handleClick() {
+    if (hasNext) {
+      setIndex(index + 1)
+    } else {
+      setIndex(0)
+    }
+    setCurrentImageSrc(null)
   }
 
+  const image = images[index]
   return (
     <>
-      <label>
-        <input type="checkbox" onChange={e => setReverse(e.target.checked)} /> Show in reverse order
-      </label>
-      <ul>
-        {displayedContacts.map(contact => (
-          <li key={contact.id}>
-            <Contact
-              contact={contact}
-              isExpanded={expandedIds.includes(contact.id)}
-              onToggle={() => {
-                if (expandedIds.includes(contact.id)) {
-                  setExpandedIds(expandedIds.filter(id => id !== contact.id))
-                } else {
-                  setExpandedIds([...expandedIds, contact.id])
-                }
-              }}
-            />
-          </li>
-        ))}
-      </ul>
+      <button onClick={handleClick}>Next</button>
+      <h3>
+        Image {index + 1} of {images.length}
+      </h3>
+      <img src={image.src} style={{ display: 'none' }} onLoad={() => setCurrentImageSrc(image.src)} />
+      {currentImageSrc && <img src={currentImageSrc} alt={image.place} />}
+      <p>{image.place}</p>
     </>
   )
 }
 
-export type ContactType = {
-  id: number
-  name: string
-  email: string
-}
-
-const contacts: ContactType[] = [
-  { id: 0, name: 'Alice', email: 'alice@mail.com' },
-  { id: 1, name: 'Bob', email: 'bob@mail.com' },
-  { id: 2, name: 'Taylor', email: 'taylor@mail.com' }
+const images = [
+  {
+    place: 'Penang, Malaysia',
+    src: 'https://i.imgur.com/FJeJR8M.jpg'
+  },
+  {
+    place: 'Lisbon, Portugal',
+    src: 'https://i.imgur.com/dB2LRbj.jpg'
+  },
+  {
+    place: 'Bilbao, Spain',
+    src: 'https://i.imgur.com/z08o2TS.jpg'
+  },
+  {
+    place: 'Valparaíso, Chile',
+    src: 'https://i.imgur.com/Y3utgTi.jpg'
+  },
+  {
+    place: 'Schwyz, Switzerland',
+    src: 'https://i.imgur.com/JBbMpWY.jpg'
+  },
+  {
+    place: 'Prague, Czechia',
+    src: 'https://i.imgur.com/QwUKKmF.jpg'
+  },
+  {
+    place: 'Ljubljana, Slovenia',
+    src: 'https://i.imgur.com/3aIiwfm.jpg'
+  }
 ]
