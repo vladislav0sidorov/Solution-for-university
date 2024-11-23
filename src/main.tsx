@@ -1,11 +1,11 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import List from './App'
-import Canvas from './App'
-import ShoppingCart from './App'
+import App from './App'
+
+import './App.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ShoppingCart />
+    <App />
   </StrictMode>
 )

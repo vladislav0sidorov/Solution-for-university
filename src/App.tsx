@@ -1,25 +1,35 @@
-// 3_3_1 Synced inputs
+// 3_2_3 Fix the disappearing selection
 /*
-  Эти два входа являются независимыми. Сделайте их синхронизированными: редактирование одного входа должно обновить другой вход с тем же текстом, и наоборот.
+    Выводится список писем, которые хранятся в переменной состояния letters. Когда вы наводите курсор или фокус на определенное письмо - оно выделяется (подсвечивается). Текущее выделенное письмо хранится в переменной состояния highlightedLetter. Вы можете "выделять" и "снимать выделение" отдельных писем, что приводит к обновлению массива letters в состоянии.
+
+    Этот код работает, но есть небольшой сбой в пользовательском интерфейсе. Когда вы нажимаете "Star" или "Unstar", подсветка на мгновение исчезает. Однако она снова появляется, как только вы перемещаете указатель или переключаетесь на другое письмо с клавиатуры. Почему это происходит? Исправьте это, чтобы подсветка не исчезала после нажатия кнопки.
 */
 
 import { useState } from 'react'
-import { letters } from './data.js'
+import { initialLetters, LetterType } from './data.js'
 import Letter from './Letter.js'
 
 export default function MailClient() {
-  const [selectedIds, setSelectedIds] = useState<number[]>([])
+  const [letters, setLetters] = useState(initialLetters)
+  const [highlightedLetter, setHighlightedLetter] = useState<LetterType | null>(null)
 
-  const selectedCount = selectedIds.length
+  function handleHover(letter: LetterType) {
+    setHighlightedLetter(letter)
+  }
 
-  function handleToggle(toggledId: number) {
-    setSelectedIds(prevIds => {
-      if (prevIds.includes(toggledId)) {
-        return prevIds.filter(id => id !== toggledId)
-      } else {
-        return [...prevIds, toggledId]
-      }
-    })
+  function handleStar(starred: LetterType) {
+    setLetters(
+      letters.map(letter => {
+        if (letter.id === starred.id) {
+          return {
+            ...letter,
+            isStarred: !letter.isStarred
+          }
+        } else {
+          return letter
+        }
+      })
+    )
   }
 
   return (
@@ -27,12 +37,14 @@ export default function MailClient() {
       <h2>Inbox</h2>
       <ul>
         {letters.map(letter => (
-          <Letter key={letter.id} letter={letter} isSelected={selectedIds.includes(letter.id)} onToggle={handleToggle} />
+          <Letter
+            key={letter.id}
+            letter={letter}
+            isHighlighted={highlightedLetter ? letter.id === highlightedLetter.id : false}
+            onHover={handleHover}
+            onToggleStar={handleStar}
+          />
         ))}
-        <hr />
-        <p>
-          <b>You selected {selectedCount} letters</b>
-        </p>
       </ul>
     </>
   )
