@@ -46,6 +46,27 @@ ul {
   padding-inline-start: 20px;
 }
 
-button { margin: 5px; }
-li { border-radius: 5px; }
-.highlighted { background: #d2eaff; }
+body { margin: 0; padding: 0; height: 250px; }
+
+.background {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #eee;
+}
+
+.background--active {
+  background: #a6b5ff;
+}
+
+.picture {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+}
+
+.picture--active {
+  border: 5px solid #a6b5ff;
+}
