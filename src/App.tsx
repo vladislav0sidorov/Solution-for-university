@@ -1,19 +1,23 @@
-// 4_8_1 Extract a useCounter Hook
+// 4_8_2 Make the counter delay configurable
 /*
-  Этот компонент использует переменную состояния и Эффект для отображения числа, которое увеличивается каждую секунду. Извлеките эту логику в пользовательский хук под названием useCounter. Ваша цель состоит в том, чтобы реализация компонента Counter выглядела именно так:
-
-  import { useCounter } from "./useCounter";
-
-  export default function Counter() {
-    const count = useCounter();
-    return <h1>Seconds passed: {count}</h1>;
-  }
-
+  Этот компонент использует переменную состояния и Эффект для отображения В этом примере есть переменная состояния delay, управляемая ползунком, но ее значение не используется. Передайте значение delay в ваш пользовательский хук useCounter, и измените хук useCounter, чтобы он использовал переданную delay вместо жесткого кодирования 1000 мс.
 */
 
-import { useCounter } from './useCounter'
+import { useState } from 'react'
+import { useCounter } from './useCounter.js'
 
 export default function Counter() {
-  const count = useCounter()
-  return <h1>Seconds passed: {count}</h1>
+  const [delay, setDelay] = useState(1000)
+  const count = useCounter(delay)
+  return (
+    <>
+      <label>
+        Tick duration: {delay} ms
+        <br />
+        <input type="range" value={delay} min="10" max="2000" onChange={e => setDelay(Number(e.target.value))} />
+      </label>
+      <hr />
+      <h1>Ticks: {count}</h1>
+    </>
+  )
 }
