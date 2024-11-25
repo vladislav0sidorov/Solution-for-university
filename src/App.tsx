@@ -1,23 +1,19 @@
-// 4_8_2 Make the counter delay configurable
+// 4_8_3 Extract useInterval out of useCounter
 /*
-  Этот компонент использует переменную состояния и Эффект для отображения В этом примере есть переменная состояния delay, управляемая ползунком, но ее значение не используется. Передайте значение delay в ваш пользовательский хук useCounter, и измените хук useCounter, чтобы он использовал переданную delay вместо жесткого кодирования 1000 мс.
+  В настоящее время ваш хук useCounter делает две вещи. Он устанавливает интервал, а также увеличивает переменную состояния при каждом тике интервала. Выделите логику, которая устанавливает интервал, в отдельный хук под названием useInterval. Он должен принимать два аргумента: обратный вызов onTick и delay. После этого изменения ваша реализация useCounter должна выглядеть следующим образом:
+
+  export function useCounter(delay) {
+    const [count, setCount] = useState(0);
+    useInterval(() => {
+        setCount((c) => c + 1);
+    }, delay);
+    return count;
+  }
 */
 
-import { useState } from 'react'
 import { useCounter } from './useCounter.js'
 
 export default function Counter() {
-  const [delay, setDelay] = useState(1000)
-  const count = useCounter(delay)
-  return (
-    <>
-      <label>
-        Tick duration: {delay} ms
-        <br />
-        <input type="range" value={delay} min="10" max="2000" onChange={e => setDelay(Number(e.target.value))} />
-      </label>
-      <hr />
-      <h1>Ticks: {count}</h1>
-    </>
-  )
+  const count = useCounter(1000)
+  return <h1>Seconds passed: {count}</h1>
 }
