@@ -46,27 +46,36 @@ ul {
   padding-inline-start: 20px;
 }
 
-body { margin: 0; padding: 0; height: 250px; }
-
-.background {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #eee;
+div {
+  width: 100%;
+  overflow: hidden;
 }
 
-.background--active {
-  background: #a6b5ff;
+nav {
+  text-align: center;
 }
 
-.picture {
-  width: 200px;
-  height: 200px;
-  border-radius: 10px;
+button {
+  margin: .25rem;
 }
 
-.picture--active {
-  border: 5px solid #a6b5ff;
+ul,
+li {
+  list-style: none;
+  white-space: nowrap;
+}
+
+li {
+  display: inline;
+  padding: 0.5rem;
+}
+
+img {
+  padding: 10px;
+  margin: -10px;
+  transition: background 0.2s linear;
+}
+
+.active {
+  background: rgba(0, 100, 150, 0.4);
 }
