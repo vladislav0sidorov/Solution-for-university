@@ -1,64 +1,39 @@
-// 4_2_3 Scrolling an image carouse
+// 4_3_1 Focus a field on mount
 /*
-  Эта карусель изображений имеет кнопку "Next", которая переключает активное изображение. Заставьте галерею прокручиваться горизонтально до активного изображения по щелчку. Для этого нужно вызвать scrollIntoView() на DOM-узле активного изображения:
+  Используйте метод focus() input'а, чтобы заставить MyInput автоматически фокусироваться, когда он появляется на экране. Уже есть закомментированная реализация, но она не совсем работает. Разберитесь, почему он не работает, и исправьте это. (Если вы знакомы с атрибутом autoFocus, представьте, что его не существует: мы реализуем ту же функциональность с нуля).
 
-  node.scrollIntoView({
-    behavior: 'smooth',
-    block: 'nearest',
-    inline: 'center',
-  });
+  Чтобы убедиться, что ваше решение работает, нажмите "Показать форму" и убедитесь, что ввод получает фокус (становится выделенным и курсор помещается внутрь). Нажмите "Скрыть форму" и снова "Показать форму". Убедитесь, что вход снова выделен.
+
+  MyInput должен фокусироваться только при монтаже, а не после каждого рендера. Чтобы убедиться в правильности поведения, нажмите "Показать форму", а затем несколько раз нажмите на флажок "Сделать прописными". Нажатие на флажок не должно не фокусировать ввод над ним.
 */
-import { useState, useRef, useEffect } from 'react'
 
-export default function CatFriends() {
-  const [index, setIndex] = useState(0)
-  const itemsRef = useRef<(HTMLLIElement | null)[]>([])
+import { useState } from 'react'
+import MyInput from './MyInput.js'
 
-  useEffect(() => {
-    itemsRef.current[index]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'nearest',
-      inline: 'center'
-    })
-  }, [index])
-
+export default function Form() {
+  const [show, setShow] = useState(false)
+  const [name, setName] = useState('Taylor')
+  const [upper, setUpper] = useState(false)
   return (
     <>
-      <nav>
-        <button
-          onClick={() => {
-            if (index < catList.length - 1) {
-              setIndex(index + 1)
-            } else {
-              setIndex(0)
-            }
-          }}
-        >
-          Next
-        </button>
-      </nav>
-      <div style={{ width: '100%', overflow: 'hidden' }}>
-        <ul style={{ display: 'flex', listStyle: 'none', padding: 0, gap: '10px' }}>
-          {catList.map((cat, i) => (
-            <li key={cat.id} ref={el => (itemsRef.current[i] = el)}>
-              <img className={index === i ? 'active' : ''} src={cat.imageUrl} alt={'Cat #' + cat.id} />
-            </li>
-          ))}
-        </ul>
-      </div>
+      <button onClick={() => setShow(s => !s)}>{show ? 'Hide' : 'Show'} form</button>
+      <br />
+      <hr />
+      {show && (
+        <>
+          <label>
+            Enter your name:
+            <MyInput value={name} onChange={e => setName(e.target.value)} />
+          </label>
+          <label>
+            <input type="checkbox" checked={upper} onChange={e => setUpper(e.target.checked)} />
+            Make it uppercase
+          </label>
+          <p>
+            Hello, <b>{upper ? name.toUpperCase() : name}</b>
+          </p>
+        </>
+      )}
     </>
   )
-}
-
-type PlaceType = {
-  id: number
-  imageUrl: string
-}
-
-const catList: PlaceType[] = []
-for (let i = 0; i < 10; i++) {
-  catList.push({
-    id: i,
-    imageUrl: 'https://loremflickr.com/320/240?cat=' + i
-  })
 }
