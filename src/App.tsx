@@ -1,87 +1,50 @@
-// 4_5_5 Populate a chain of select boxes
+// 4_6_1 Fix a variable that doesn’t update
 /*
-  В этом примере есть два поля выбора. Одно поле позволяет пользователю выбрать планету. Другое поле позволяет пользователю выбрать место на этой планете. Второе поле пока не работает. Ваша задача - заставить его показывать места на выбранной планете.
+  Этот компонент Timer хранит переменную состояния count, которая увеличивается каждую секунду. Значение, на которое она увеличивается, хранится в переменной состояния increment. Вы можете управлять переменной increment с помощью кнопок плюс и минус.
 
-  Посмотрите, как работает первое поле выбора. Оно заполняет состояние planetList результатом вызова API "/planets". ID выбранной планеты хранится в переменной состояния planetId. Вам нужно найти, куда добавить дополнительный код, чтобы переменная состояния placeList заполнялась результатом вызова API "/planets/" + planetId + "/places".
-
-  Если вы реализуете это правильно, выбор планеты должен заполнить список мест. Изменение планеты должно изменить список мест.
+  Однако, сколько бы раз вы ни нажали на кнопку с плюсом, счетчик все равно увеличивается на единицу каждую секунду. Что не так с этим кодом? Почему increment всегда равен 1 в коде Effect'а? Найдите ошибку и исправьте ее.
 */
 
 import { useState, useEffect } from 'react'
-import { fetchData, GeoObj } from './api'
 
-export default function Page() {
-  const [planetList, setPlanetList] = useState<GeoObj[]>([])
-  const [planetId, setPlanetId] = useState<string>('')
-
-  const [placeList, setPlaceList] = useState<GeoObj[]>([])
-  const [placeId, setPlaceId] = useState<string>('')
+export default function Timer() {
+  const [count, setCount] = useState(0)
+  const [increment, setIncrement] = useState(1)
 
   useEffect(() => {
-    let ignore = false
-    fetchData('/planets').then(result => {
-      if (!ignore) {
-        console.log('Fetched a list of planets.')
-        setPlanetList(result)
-        setPlanetId(result[0].id)
-      }
-    })
+    const id = setInterval(() => {
+      setCount(c => c + increment)
+    }, 1000)
     return () => {
-      ignore = true
+      clearInterval(id)
     }
-  }, [])
-
-  useEffect(() => {
-    let ignore = false
-    if (planetId) {
-      fetchData('/planets/' + planetId + '/places').then(result => {
-        if (!ignore) {
-          console.log('Fetched a list of places for planet:', planetId)
-          setPlaceList(result)
-          setPlaceId(result[0]?.id || '')
-        }
-      })
-    }
-    return () => {
-      ignore = true
-    }
-  }, [planetId])
+  }, [increment])
 
   return (
     <>
-      <label>
-        Pick a planet:{' '}
-        <select
-          value={planetId}
-          onChange={e => {
-            setPlanetId(e.target.value)
-          }}
-        >
-          {planetList.map(planet => (
-            <option key={planet.id} value={planet.id}>
-              {planet.name}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label>
-        Pick a place:{' '}
-        <select
-          value={placeId}
-          onChange={e => {
-            setPlaceId(e.target.value)
-          }}
-        >
-          {placeList.map(place => (
-            <option key={place.id} value={place.id}>
-              {place.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <h1>
+        Counter: {count}
+        <button onClick={() => setCount(0)}>Reset</button>
+      </h1>
       <hr />
       <p>
-        You are going to: {placeId || '???'} on {planetId || '???'}{' '}
+        Every second, increment by:
+        <button
+          disabled={increment === 0}
+          onClick={() => {
+            setIncrement(i => i - 1)
+          }}
+        >
+          –
+        </button>
+        <b>{increment}</b>
+        <button
+          onClick={() => {
+            setIncrement(i => i + 1)
+          }}
+        >
+          +
+        </button>
       </p>
     </>
   )
