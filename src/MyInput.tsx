@@ -1,11 +1,21 @@
 import { useEffect, useRef } from 'react'
 
-export default function MyInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  const inputRef = useRef<HTMLInputElement>(null)
+export default function MyInput({
+  shouldFocus,
+  value,
+  onChange
+}: {
+  shouldFocus: boolean
+  value: string
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}) {
+  const ref = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    inputRef.current?.focus()
-  }, [])
+    if (shouldFocus) {
+      ref.current?.focus()
+    }
+  }, [shouldFocus])
 
-  return <input {...props} ref={inputRef} />
+  return <input ref={ref} value={value} onChange={onChange} />
 }

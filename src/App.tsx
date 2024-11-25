@@ -1,10 +1,10 @@
-// 4_3_1 Focus a field on mount
+// 4_3_2 Focus a field conditionally
 /*
-  Используйте метод focus() input'а, чтобы заставить MyInput автоматически фокусироваться, когда он появляется на экране. Уже есть закомментированная реализация, но она не совсем работает. Разберитесь, почему он не работает, и исправьте это. (Если вы знакомы с атрибутом autoFocus, представьте, что его не существует: мы реализуем ту же функциональность с нуля).
+  Эта форма отображает два компонента <MyInput />.
 
-  Чтобы убедиться, что ваше решение работает, нажмите "Показать форму" и убедитесь, что ввод получает фокус (становится выделенным и курсор помещается внутрь). Нажмите "Скрыть форму" и снова "Показать форму". Убедитесь, что вход снова выделен.
+  Нажмите "Показать форму" и обратите внимание, что второе поле автоматически фокусируется. Это происходит потому, что оба компонента <MyInput /> пытаются сфокусировать поле внутри. Когда вы вызываете focus() для двух полей ввода подряд, последнее всегда "побеждает".
 
-  MyInput должен фокусироваться только при монтаже, а не после каждого рендера. Чтобы убедиться в правильности поведения, нажмите "Показать форму", а затем несколько раз нажмите на флажок "Сделать прописными". Нажатие на флажок не должно не фокусировать ввод над ним.
+  Допустим, вы хотите сфокусировать первое поле. Первый компонент MyInput теперь получает булево свойство shouldFocus, установленное в true. Измените логику так, чтобы focus() вызывалась только в том случае, если пропс shouldFocus, полученный MyInput, равен true.
 */
 
 import { useState } from 'react'
@@ -12,8 +12,10 @@ import MyInput from './MyInput.js'
 
 export default function Form() {
   const [show, setShow] = useState(false)
-  const [name, setName] = useState('Taylor')
+  const [firstName, setFirstName] = useState('Taylor')
+  const [lastName, setLastName] = useState('Swift')
   const [upper, setUpper] = useState(false)
+  const name = firstName + ' ' + lastName
   return (
     <>
       <button onClick={() => setShow(s => !s)}>{show ? 'Hide' : 'Show'} form</button>
@@ -22,12 +24,12 @@ export default function Form() {
       {show && (
         <>
           <label>
-            Enter your name:
-            <MyInput value={name} onChange={e => setName(e.target.value)} />
+            Enter your first name:
+            <MyInput value={firstName} onChange={e => setFirstName(e.target.value)} shouldFocus={true} />
           </label>
           <label>
-            <input type="checkbox" checked={upper} onChange={e => setUpper(e.target.checked)} />
-            Make it uppercase
+            Enter your last name:
+            <MyInput value={lastName} onChange={e => setLastName(e.target.value)} shouldFocus={false} />
           </label>
           <p>
             Hello, <b>{upper ? name.toUpperCase() : name}</b>
