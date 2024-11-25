@@ -1,45 +1,88 @@
-// 4_5_4 Fix a connection switch
+// 4_5_5 Populate a chain of select boxes
 /*
-  В этом примере сервис чата в chat.js раскрывает два различных API: createEncryptedConnection и createUnencryptedConnection. Корневой компонент App позволяет пользователю выбрать, использовать шифрование или нет, а затем передает соответствующий метод API дочернему компоненту ChatRoom в качестве пропса createConnection.
+  В этом примере есть два поля выбора. Одно поле позволяет пользователю выбрать планету. Другое поле позволяет пользователю выбрать место на этой планете. Второе поле пока не работает. Ваша задача - заставить его показывать места на выбранной планете.
 
-  Обратите внимание, что изначально в консольных журналах говорится, что соединение не зашифровано. Попробуйте установить флажок: ничего не произойдет. Однако если после этого вы измените выбранную комнату, то чат снова подключится и включит шифрование (как вы увидите из консольных сообщений). Это ошибка. Исправьте ошибку, чтобы переключение флажка также приводило к переподключению чата.
+  Посмотрите, как работает первое поле выбора. Оно заполняет состояние planetList результатом вызова API "/planets". ID выбранной планеты хранится в переменной состояния planetId. Вам нужно найти, куда добавить дополнительный код, чтобы переменная состояния placeList заполнялась результатом вызова API "/planets/" + planetId + "/places".
+
+  Если вы реализуете это правильно, выбор планеты должен заполнить список мест. Изменение планеты должно изменить список мест.
 */
 
-import { useState, useCallback } from 'react'
-import ChatRoom from './ChatRoom'
-import { createEncryptedConnection, createUnencryptedConnection } from './chat'
+import { useState, useEffect } from 'react'
+import { fetchData, GeoObj } from './api'
 
-export default function App() {
-  const [roomId, setRoomId] = useState('general')
-  const [isEncrypted, setIsEncrypted] = useState(false)
+export default function Page() {
+  const [planetList, setPlanetList] = useState<GeoObj[]>([])
+  const [planetId, setPlanetId] = useState<string>('')
 
-  const createConnection = useCallback(
-    (serverUrl: string, roomId: string) => {
-      if (isEncrypted) {
-        return createEncryptedConnection(serverUrl, roomId)
-      } else {
-        return createUnencryptedConnection(serverUrl, roomId)
+  const [placeList, setPlaceList] = useState<GeoObj[]>([])
+  const [placeId, setPlaceId] = useState<string>('')
+
+  useEffect(() => {
+    let ignore = false
+    fetchData('/planets').then(result => {
+      if (!ignore) {
+        console.log('Fetched a list of planets.')
+        setPlanetList(result)
+        setPlanetId(result[0].id)
       }
-    },
-    [isEncrypted]
-  )
+    })
+    return () => {
+      ignore = true
+    }
+  }, [])
+
+  useEffect(() => {
+    let ignore = false
+    if (planetId) {
+      fetchData('/planets/' + planetId + '/places').then(result => {
+        if (!ignore) {
+          console.log('Fetched a list of places for planet:', planetId)
+          setPlaceList(result)
+          setPlaceId(result[0]?.id || '')
+        }
+      })
+    }
+    return () => {
+      ignore = true
+    }
+  }, [planetId])
 
   return (
     <>
       <label>
-        Choose the chat room:{' '}
-        <select value={roomId} onChange={e => setRoomId(e.target.value)}>
-          <option value="general">general</option>
-          <option value="travel">travel</option>
-          <option value="music">music</option>
+        Pick a planet:{' '}
+        <select
+          value={planetId}
+          onChange={e => {
+            setPlanetId(e.target.value)
+          }}
+        >
+          {planetList.map(planet => (
+            <option key={planet.id} value={planet.id}>
+              {planet.name}
+            </option>
+          ))}
         </select>
       </label>
       <label>
-        <input type="checkbox" checked={isEncrypted} onChange={e => setIsEncrypted(e.target.checked)} />
-        Enable encryption
+        Pick a place:{' '}
+        <select
+          value={placeId}
+          onChange={e => {
+            setPlaceId(e.target.value)
+          }}
+        >
+          {placeList.map(place => (
+            <option key={place.id} value={place.id}>
+              {place.name}
+            </option>
+          ))}
+        </select>
       </label>
       <hr />
-      <ChatRoom roomId={roomId} createConnection={createConnection} />
+      <p>
+        You are going to: {placeId || '???'} on {planetId || '???'}{' '}
+      </p>
     </>
   )
 }
