@@ -1,46 +1,47 @@
-// 4_5_1 Fix reconnecting on every keystroke
+// 4_5_2 Switch synchronization on and off
 /*
-  В этом примере компонент ChatRoom подключается к чату, когда он монтируется, отключается, когда размонтируется, и снова подключается, когда вы выбираете другой чат. Такое поведение является правильным, поэтому необходимо, чтобы оно работало.
+  В этом примере Эффект подписывается на событие window pointermove, чтобы переместить розовую точку на экране. Попробуйте навести курсор на область предварительного просмотра (или коснуться экрана, если вы пользуетесь мобильным устройством) и посмотрите, как розовая точка следует за вашим движением.
 
-  Однако существует проблема. Всякий раз, когда вы вводите текст в поле ввода сообщения внизу, ChatRoom также переподключается к чату. (Вы можете заметить это, очистив консоль и введя текст в поле ввода). Исправьте проблему, чтобы этого не происходило.
+  Также имеется флажок. Установка флажка переключает переменную состояния canMove, но эта переменная состояния не используется нигде в коде. Ваша задача - изменить код так, чтобы при значении canMove, равном false (флажок снят), точка переставала двигаться. После того, как вы снова включите флажок (и установите canMove в true), точка снова должна следовать за движением. Другими словами, то, может ли точка двигаться или нет, должно синхронизироваться с тем, установлен ли флажок.
 */
 
 import { useState, useEffect } from 'react'
-import { createConnection } from './chat'
-
-const serverUrl = 'https://localhost:1234'
-
-function ChatRoom({ roomId }: { roomId: string }) {
-  const [message, setMessage] = useState('')
-
-  useEffect(() => {
-    const connection = createConnection(serverUrl, roomId)
-    connection.connect()
-    return () => connection.disconnect()
-  }, [roomId])
-
-  return (
-    <>
-      <h1>Welcome to the {roomId} room!</h1>
-      <input value={message} onChange={e => setMessage(e.target.value)} />
-    </>
-  )
-}
 
 export default function App() {
-  const [roomId, setRoomId] = useState('general')
+  const [position, setPosition] = useState({ x: 0, y: 0 })
+  const [canMove, setCanMove] = useState(true)
+
+  useEffect(() => {
+    if (!canMove) return
+
+    function handleMove(e: PointerEvent) {
+      setPosition({ x: e.clientX, y: e.clientY })
+    }
+    window.addEventListener('pointermove', handleMove)
+    return () => window.removeEventListener('pointermove', handleMove)
+  }, [canMove])
+
   return (
     <>
       <label>
-        Choose the chat room:{' '}
-        <select value={roomId} onChange={e => setRoomId(e.target.value)}>
-          <option value="general">general</option>
-          <option value="travel">travel</option>
-          <option value="music">music</option>
-        </select>
+        <input type="checkbox" checked={canMove} onChange={e => setCanMove(e.target.checked)} />
+        The dot is allowed to move
       </label>
       <hr />
-      <ChatRoom roomId={roomId} />
+      <div
+        style={{
+          position: 'absolute',
+          backgroundColor: 'pink',
+          borderRadius: '50%',
+          opacity: 0.6,
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          pointerEvents: 'none',
+          left: -20,
+          top: -20,
+          width: 40,
+          height: 40
+        }}
+      />
     </>
   )
 }
