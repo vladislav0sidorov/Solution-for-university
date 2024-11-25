@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react'
-import { Connection } from './chat'
+import { useEffect } from 'react'
+import { createConnection, Options } from './chat'
 
-export default function ChatRoom({ roomId, createConnection }: { roomId: string; createConnection: (roomId: string) => Connection }) {
+export default function ChatRoom({ options }: { options: Options }) {
   useEffect(() => {
-    const connection = createConnection(roomId)
+    const connection = createConnection(options)
     connection.connect()
     return () => connection.disconnect()
-  }, [roomId, createConnection])
+  }, [options])
 
-  return <h1>Welcome to the {roomId} room!</h1>
+  return <h1>Welcome to the {options.roomId} room!</h1>
 }

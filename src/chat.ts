@@ -3,26 +3,25 @@ export type Connection = {
     disconnect(): void;
 }
 
-export function createEncryptedConnection(roomId: string): Connection {
-    // A real implementation would actually connect to the server
-    return {
-      connect() {
-        console.log('✅ 🔐 Connecting to "' + roomId + '... (encrypted)');
-      },
-      disconnect() {
-        console.log('❌ 🔐 Disconnected from "' + roomId + '" room (encrypted)');
-      }
-    };
-  }
+export type Options = {
+    serverUrl: string;
+    roomId: string;
+}
 
-  export function createUnencryptedConnection(roomId: string): Connection {
+export function createConnection({ serverUrl, roomId }: Options) : Connection {
     // A real implementation would actually connect to the server
+    // if (typeof serverUrl !== 'string') {
+    //   throw Error('Expected serverUrl to be a string. Received: ' + serverUrl);
+    // }
+    // if (typeof roomId !== 'string') {
+    //   throw Error('Expected roomId to be a string. Received: ' + roomId);
+    // }
     return {
       connect() {
-        console.log('✅ Connecting to "' + roomId + '... (unencrypted)');
+        console.log('✅ Connecting to "' + roomId + '" room at ' + serverUrl + '...');
       },
       disconnect() {
-        console.log('❌ Disconnected from "' + roomId + '" room (unencrypted)');
+        console.log('❌ Disconnected from "' + roomId + '" room at ' + serverUrl);
       }
     };
   }

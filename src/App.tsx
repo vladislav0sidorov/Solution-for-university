@@ -1,24 +1,42 @@
-// 4_7_1 Fix a resetting interval
+// 4_7_3 Fix a reconnecting chat
 /*
-  Этот Эффект устанавливает интервал, который тикает каждую секунду. Вы заметили, что происходит что-то странное: кажется, что интервал уничтожается и создается заново каждый раз, когда он тикает. Исправьте код так, чтобы интервал не создавался постоянно заново.
+  В этом примере каждый раз, когда вы нажимаете кнопку "Toggle theme", чат переподключается. Почему это происходит? Исправьте ошибку, чтобы чат переподключался только тогда, когда вы редактируете URL сервера или выбираете другой чат.
+
+  Относитесь к chat.ts как к внешней сторонней библиотеке: вы можете обратиться к ней, чтобы проверить ее API, но не редактируйте ее.
 */
 
-import { useState, useEffect } from 'react'
+import { useState, useMemo } from 'react'
+import ChatRoom from './ChatRoom.js'
 
-export default function Timer() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [isDark, setIsDark] = useState(false)
+  const [roomId, setRoomId] = useState('general')
+  const [serverUrl, setServerUrl] = useState('https://localhost:1234')
 
-  useEffect(() => {
-    console.log('✅ Creating an interval')
-    const id = setInterval(() => {
-      console.log('⏰ Interval tick')
-      setCount(c => c + 1)
-    }, 1000)
-    return () => {
-      console.log('❌ Clearing an interval')
-      clearInterval(id)
-    }
-  }, [])
+  const options = useMemo(
+    () => ({
+      serverUrl: serverUrl,
+      roomId: roomId
+    }),
+    [serverUrl, roomId]
+  )
 
-  return <h1>Counter: {count}</h1>
+  return (
+    <div className={isDark ? 'dark' : 'light'}>
+      <button onClick={() => setIsDark(!isDark)}>Toggle theme</button>
+      <label>
+        Server URL: <input value={serverUrl} onChange={e => setServerUrl(e.target.value)} />
+      </label>
+      <label>
+        Choose the chat room:{' '}
+        <select value={roomId} onChange={e => setRoomId(e.target.value)}>
+          <option value="general">general</option>
+          <option value="travel">travel</option>
+          <option value="music">music</option>
+        </select>
+      </label>
+      <hr />
+      <ChatRoom options={options} />
+    </div>
+  )
 }
