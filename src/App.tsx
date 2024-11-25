@@ -1,50 +1,46 @@
-// 4_4_4 Submit a form without Effects
+// 4_5_1 Fix reconnecting on every keystroke
 /*
-  Этот компонент Form позволяет вам отправить сообщение другу. Когда вы отправляете форму, переменная состояния showForm устанавливается в false. Это вызывает Эффект, вызывающий sendMessage(message), который отправляет сообщение (вы можете увидеть его в консоли). После отправки сообщения вы видите диалог "Спасибо" с кнопкой "Открыть чат", которая позволяет вам вернуться к форме.
+  В этом примере компонент ChatRoom подключается к чату, когда он монтируется, отключается, когда размонтируется, и снова подключается, когда вы выбираете другой чат. Такое поведение является правильным, поэтому необходимо, чтобы оно работало.
 
-  Пользователи вашего приложения отправляют слишком много сообщений. Чтобы немного усложнить общение в чате, вы решили показывать диалог "Спасибо" первым, а не форму. Измените переменную состояния showForm так, чтобы она инициализировалась значением false вместо true. Как только вы сделаете это изменение, консоль покажет, что было отправлено пустое сообщение. Что-то в этой логике неправильно!
-
-  В чем первопричина этой проблемы? И как вы можете ее устранить?
+  Однако существует проблема. Всякий раз, когда вы вводите текст в поле ввода сообщения внизу, ChatRoom также переподключается к чату. (Вы можете заметить это, очистив консоль и введя текст в поле ввода). Исправьте проблему, чтобы этого не происходило.
 */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createConnection } from './chat'
 
-export default function Form() {
-  const [showForm, setShowForm] = useState(false)
+const serverUrl = 'https://localhost:1234'
+
+function ChatRoom({ roomId }: { roomId: string }) {
   const [message, setMessage] = useState('')
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    sendMessage(message)
-    setShowForm(false)
-  }
-
-  if (!showForm) {
-    return (
-      <>
-        <h1>Thanks for using our services!</h1>
-        <button
-          onClick={() => {
-            setMessage('')
-            setShowForm(true)
-          }}
-        >
-          Open chat
-        </button>
-      </>
-    )
-  }
+  useEffect(() => {
+    const connection = createConnection(serverUrl, roomId)
+    connection.connect()
+    return () => connection.disconnect()
+  }, [roomId])
 
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea placeholder="Message" value={message} onChange={e => setMessage(e.target.value)} />
-      <button type="submit" disabled={message === ''}>
-        Send
-      </button>
-    </form>
+    <>
+      <h1>Welcome to the {roomId} room!</h1>
+      <input value={message} onChange={e => setMessage(e.target.value)} />
+    </>
   )
 }
 
-function sendMessage(message: string) {
-  console.log('Sending message: ' + message)
+export default function App() {
+  const [roomId, setRoomId] = useState('general')
+  return (
+    <>
+      <label>
+        Choose the chat room:{' '}
+        <select value={roomId} onChange={e => setRoomId(e.target.value)}>
+          <option value="general">general</option>
+          <option value="travel">travel</option>
+          <option value="music">music</option>
+        </select>
+      </label>
+      <hr />
+      <ChatRoom roomId={roomId} />
+    </>
+  )
 }
