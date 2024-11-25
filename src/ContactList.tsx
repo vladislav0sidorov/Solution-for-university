@@ -1,6 +1,14 @@
-import { Contact } from './App'
+import { ContactType } from './App'
 
-export default function ContactList({ contacts, selectedId, onSelect }: { contacts: Contact[]; selectedId: number; onSelect: (id: number) => void }) {
+export default function ContactList({
+  contacts,
+  selectedId,
+  onSelect
+}: {
+  contacts: ContactType[]
+  selectedId: number
+  onSelect: (id: number) => void
+}) {
   return (
     <section>
       <ul>

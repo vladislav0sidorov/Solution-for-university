@@ -1,38 +1,47 @@
-// 4_4_2 Cache a calculation without Effects
+// 4_4_3 Reset state without Effects
 /*
-  В этом примере фильтрация тодосов была вынесена в отдельную функцию под названием getVisibleTodos(). Эта функция содержит внутри себя вызов console.log(), который поможет вам заметить, когда она вызывается. Установите флажок "Показывать только активные тодосы" и обратите внимание, что это вызывает повторный запуск getVisibleTodos(). Это ожидаемо, поскольку видимые тодосы меняются, когда вы переключаете, какие из них показывать.
+  Этот компонент EditContact получает объект контакта, имеющий форму { id, name, email } в качестве пропса savedContact. Попробуйте отредактировать поля ввода имени и электронной почты. Когда вы нажмете кнопку Save, кнопка контакта над формой обновится на отредактированное имя. При нажатии кнопки Reset все изменения в форме будут отменены. Поиграйте с этим пользовательским интерфейсом, чтобы почувствовать его.
 
-  Ваша задача - удалить эффект, который пересчитывает список visibleTodos в компоненте TodoList. Однако, вам нужно убедиться, что getVisibleTodos() не повторно запускается (и поэтому не печатает никаких логов), когда вы вводите данные в input.
+  Когда вы выбираете контакт с помощью кнопок вверху, форма сбрасывается, чтобы отразить данные этого контакта. Это делается с помощью эффекта внутри EditContact.js. Удалите этот эффект. Найдите другой способ сброса формы при изменении savedContact.id.
 */
 
-import { useState, useMemo } from 'react'
-import { initialTodos, createTodo, getVisibleTodos } from './todos.js'
+import { useState } from 'react'
+import ContactList from './ContactList'
+import EditContact from './EditContact'
 
-export default function TodoList() {
-  const [todos, setTodos] = useState(initialTodos)
-  const [showActive, setShowActive] = useState(false)
-  const [text, setText] = useState('')
+export default function ContactManager() {
+  const [contacts, setContacts] = useState(initialContacts)
+  const [selectedId, setSelectedId] = useState(0)
+  const selectedContact = contacts.find(c => c.id === selectedId)!
 
-  const visibleTodos = useMemo(() => getVisibleTodos(todos, showActive), [todos, showActive])
-
-  function handleAddClick() {
-    setText('')
-    setTodos([...todos, createTodo(text)])
+  function handleSave(updatedData: ContactType) {
+    const nextContacts = contacts.map(c => {
+      if (c.id === updatedData.id) {
+        return updatedData
+      } else {
+        return c
+      }
+    })
+    setContacts(nextContacts)
   }
 
   return (
-    <>
-      <label>
-        <input type="checkbox" checked={showActive} onChange={e => setShowActive(e.target.checked)} />
-        Show only active todos
-      </label>
-      <input value={text} onChange={e => setText(e.target.value)} />
-      <button onClick={handleAddClick}>Add</button>
-      <ul>
-        {visibleTodos.map(todo => (
-          <li key={todo.id}>{todo.completed ? <s>{todo.text}</s> : todo.text}</li>
-        ))}
-      </ul>
-    </>
+    <div>
+      <ContactList contacts={contacts} selectedId={selectedId} onSelect={id => setSelectedId(id)} />
+      <hr />
+      <EditContact key={selectedId} savedContact={selectedContact} onSave={handleSave} />
+    </div>
   )
 }
+
+export type ContactType = {
+  id: number
+  name: string
+  email: string
+}
+
+const initialContacts: ContactType[] = [
+  { id: 0, name: 'Taylor', email: 'taylor@mail.com' },
+  { id: 1, name: 'Alice', email: 'alice@mail.com' },
+  { id: 2, name: 'Bob', email: 'bob@mail.com' }
+]

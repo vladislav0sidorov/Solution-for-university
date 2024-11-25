@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Contact } from './App'
+import { ContactType } from './App'
 
-export default function EditContact({ initialData, onSave }: { initialData: Contact; onSave: (data: Contact) => void }) {
-  const [name, setName] = useState(initialData.name)
-  const [email, setEmail] = useState(initialData.email)
+export default function EditContact({ savedContact, onSave }: { savedContact: ContactType; onSave: (contact: ContactType) => void }) {
+  const [name, setName] = useState(savedContact.name)
+  const [email, setEmail] = useState(savedContact.email)
+
   return (
     <section>
       <label>
@@ -14,20 +15,19 @@ export default function EditContact({ initialData, onSave }: { initialData: Cont
       </label>
       <button
         onClick={() => {
-          const updatedData = {
-            id: initialData.id,
+          onSave({
+            id: savedContact.id,
             name: name,
             email: email
-          }
-          onSave(updatedData)
+          })
         }}
       >
         Save
       </button>
       <button
         onClick={() => {
-          setName(initialData.name)
-          setEmail(initialData.email)
+          setName(savedContact.name)
+          setEmail(savedContact.email)
         }}
       >
         Reset
