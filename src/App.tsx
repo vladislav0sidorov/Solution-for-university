@@ -1,19 +1,24 @@
-// 4_4_1 Transform data without Effects
+// 4_4_2 Cache a calculation without Effects
 /*
-  Приведенный ниже TodoList отображает список дел. Когда установлен флажок "Показывать только активные задания", завершенные задания не отображаются в списке. Независимо от того, какие из них видны, в нижнем колонтитуле отображается количество еще не завершенных дел.
+  В этом примере фильтрация тодосов была вынесена в отдельную функцию под названием getVisibleTodos(). Эта функция содержит внутри себя вызов console.log(), который поможет вам заметить, когда она вызывается. Установите флажок "Показывать только активные тодосы" и обратите внимание, что это вызывает повторный запуск getVisibleTodos(). Это ожидаемо, поскольку видимые тодосы меняются, когда вы переключаете, какие из них показывать.
 
-  Упростите этот компонент, удалив все ненужные состояния и эффекты.
+  Ваша задача - удалить эффект, который пересчитывает список visibleTodos в компоненте TodoList. Однако, вам нужно убедиться, что getVisibleTodos() не повторно запускается (и поэтому не печатает никаких логов), когда вы вводите данные в input.
 */
 
-import { useState } from 'react'
-import { initialTodos, createTodo, Todo } from './todos'
+import { useState, useMemo } from 'react'
+import { initialTodos, createTodo, getVisibleTodos } from './todos.js'
 
 export default function TodoList() {
   const [todos, setTodos] = useState(initialTodos)
   const [showActive, setShowActive] = useState(false)
+  const [text, setText] = useState('')
 
-  const activeTodos = todos.filter(todo => !todo.completed)
-  const visibleTodos = showActive ? activeTodos : todos
+  const visibleTodos = useMemo(() => getVisibleTodos(todos, showActive), [todos, showActive])
+
+  function handleAddClick() {
+    setText('')
+    setTodos([...todos, createTodo(text)])
+  }
 
   return (
     <>
@@ -21,29 +26,13 @@ export default function TodoList() {
         <input type="checkbox" checked={showActive} onChange={e => setShowActive(e.target.checked)} />
         Show only active todos
       </label>
-      <NewTodo onAdd={newTodo => setTodos([...todos, newTodo])} />
+      <input value={text} onChange={e => setText(e.target.value)} />
+      <button onClick={handleAddClick}>Add</button>
       <ul>
         {visibleTodos.map(todo => (
           <li key={todo.id}>{todo.completed ? <s>{todo.text}</s> : todo.text}</li>
         ))}
       </ul>
-      <footer>{activeTodos.length} todos left</footer>
-    </>
-  )
-}
-
-function NewTodo({ onAdd }: { onAdd: (todo: Todo) => void }) {
-  const [text, setText] = useState('')
-
-  function handleAddClick() {
-    setText('')
-    onAdd(createTodo(text))
-  }
-
-  return (
-    <>
-      <input value={text} onChange={e => setText(e.target.value)} />
-      <button onClick={handleAddClick}>Add</button>
     </>
   )
 }

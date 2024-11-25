@@ -6,6 +6,14 @@ export type Todo = {
 
 
 let nextId = 0;
+let calls = 0;
+
+export function getVisibleTodos(todos: Todo[], showActive: boolean) {
+  console.log(`getVisibleTodos() was called ${++calls} times`);
+  const activeTodos = todos.filter(todo => !todo.completed);
+  const visibleTodos = showActive ? activeTodos : todos;
+  return visibleTodos;
+}
 
 export function createTodo(text: string, completed = false): Todo {
   return {
