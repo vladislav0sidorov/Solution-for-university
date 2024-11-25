@@ -1,37 +1,31 @@
-import { useRef } from 'react'
-
-// 4_1_3  Fix debouncing
+// 4_1_4  Read the latest state
 /*
-  В этом примере все обработчики нажатия на кнопку выполняют "антидребезг". Чтобы увидеть, что это значит, нажмите на одну из кнопок. Обратите внимание, что через секунду появится сообщение. Если вы нажмете кнопку в ожидании сообщения, таймер сбросится. Таким образом, если вы будете нажимать одну и ту же кнопку много раз, сообщение появится только через секунду после того, как вы перестанете нажимать. Антидребезг позволяет отложить выполнение какого-либо действия до тех пор, пока пользователь не "перестанет делать что-то".
+  В этом примере после нажатия кнопки "Отправить" происходит небольшая задержка перед отображением сообщения. Введите "hello", нажмите "Отправить", а затем быстро отредактируйте ввод снова. Несмотря на ваши правки, оповещение все равно покажет "hello" (это было значение state на момент нажатия кнопки).
 
-  Этот пример работает, но не совсем так, как было задумано. Кнопки не являются независимыми. Чтобы увидеть проблему, нажмите на одну из кнопок, а затем сразу же нажмите на другую. Можно было бы ожидать, что после задержки вы увидите сообщения обеих кнопок. Но отображается только сообщение последней кнопки. Сообщение первой кнопки теряется.
-
-  Почему кнопки мешают друг другу? Найдите и устраните проблему.
+  Обычно такое поведение - это то, что вы хотите видеть в приложении. Однако иногда могут возникнуть ситуации, когда вы хотите, чтобы асинхронный код считывал последнюю версию некоторого состояния. Можете ли вы придумать, как сделать так, чтобы оповещение показывало текущий текст ввода, а не тот, что был в момент нажатия?
 */
+import { useState, useRef } from 'react'
 
-function DebouncedButton({ onClick, children }: { onClick: () => void; children: React.ReactNode }) {
-  const timeoutID = useRef<number>()
+export default function Chat() {
+  const [text, setText] = useState('')
+  const latestText = useRef('')
 
-  return (
-    <button
-      onClick={() => {
-        clearTimeout(timeoutID.current)
-        timeoutID.current = setTimeout(() => {
-          onClick()
-        }, 1000)
-      }}
-    >
-      {children}
-    </button>
-  )
-}
+  function handleSend() {
+    setTimeout(() => {
+      alert('Sending: ' + latestText.current)
+    }, 3000)
+  }
 
-export default function Dashboard() {
   return (
     <>
-      <DebouncedButton onClick={() => alert('Spaceship launched!')}>Launch the spaceship</DebouncedButton>
-      <DebouncedButton onClick={() => alert('Soup boiled!')}>Boil the soup</DebouncedButton>
-      <DebouncedButton onClick={() => alert('Lullaby sung!')}>Sing a lullaby</DebouncedButton>
+      <input
+        value={text}
+        onChange={e => {
+          setText(e.target.value)
+          latestText.current = e.target.value
+        }}
+      />
+      <button onClick={handleSend}>Send</button>
     </>
   )
 }
