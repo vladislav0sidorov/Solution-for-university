@@ -1,42 +1,19 @@
-// 4_7_3 Fix a reconnecting chat
+// 4_8_1 Extract a useCounter Hook
 /*
-  В этом примере каждый раз, когда вы нажимаете кнопку "Toggle theme", чат переподключается. Почему это происходит? Исправьте ошибку, чтобы чат переподключался только тогда, когда вы редактируете URL сервера или выбираете другой чат.
+  Этот компонент использует переменную состояния и Эффект для отображения числа, которое увеличивается каждую секунду. Извлеките эту логику в пользовательский хук под названием useCounter. Ваша цель состоит в том, чтобы реализация компонента Counter выглядела именно так:
 
-  Относитесь к chat.ts как к внешней сторонней библиотеке: вы можете обратиться к ней, чтобы проверить ее API, но не редактируйте ее.
+  import { useCounter } from "./useCounter";
+
+  export default function Counter() {
+    const count = useCounter();
+    return <h1>Seconds passed: {count}</h1>;
+  }
+
 */
 
-import { useState, useMemo } from 'react'
-import ChatRoom from './ChatRoom.js'
+import { useCounter } from './useCounter'
 
-export default function App() {
-  const [isDark, setIsDark] = useState(false)
-  const [roomId, setRoomId] = useState('general')
-  const [serverUrl, setServerUrl] = useState('https://localhost:1234')
-
-  const options = useMemo(
-    () => ({
-      serverUrl: serverUrl,
-      roomId: roomId
-    }),
-    [serverUrl, roomId]
-  )
-
-  return (
-    <div className={isDark ? 'dark' : 'light'}>
-      <button onClick={() => setIsDark(!isDark)}>Toggle theme</button>
-      <label>
-        Server URL: <input value={serverUrl} onChange={e => setServerUrl(e.target.value)} />
-      </label>
-      <label>
-        Choose the chat room:{' '}
-        <select value={roomId} onChange={e => setRoomId(e.target.value)}>
-          <option value="general">general</option>
-          <option value="travel">travel</option>
-          <option value="music">music</option>
-        </select>
-      </label>
-      <hr />
-      <ChatRoom options={options} />
-    </div>
-  )
+export default function Counter() {
+  const count = useCounter()
+  return <h1>Seconds passed: {count}</h1>
 }
