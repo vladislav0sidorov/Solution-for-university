@@ -1,32 +1,39 @@
-import { useState } from 'react'
-
 // 3_1_1 Add and remove a CSS class
 /*
-    Сделайте так, чтобы щелчок на картинке удалял CSS-класс background--active из внешнего <div>, но добавлял класс picture--active к <img>. Повторный щелчок по фону восстановит исходные CSS-классы.
-
-    Визуально вы должны увидеть, что щелчок на изображении удаляет фиолетовый фон и выделяет границу изображения. Щелчок за пределами изображения выделяет фон, но убирает выделение границы изображения.
+    Если ввести сообщение и нажать "Отправить" то перед появлением сообщения "Отправлено!" произойдет трехсекундная задержка. Кнопка "Отменить" должна остановить появление сообщения "Отправлено!". Она делает это, вызывая clearTimeout для идентификатора таймаута, сохраненного во время handleSend. Однако даже после нажатия кнопки "Отменить" сообщение "Отправлено!" все равно появляется. Найдите причину неработоспособности и устраните ее.
 */
 
-export default function Picture() {
-  const [isImageActive, setIsImageActive] = useState(false)
+import { useState } from 'react'
 
-  const handleImageClick = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setIsImageActive(true)
+export default function Chat() {
+  const [text, setText] = useState('')
+  const [isSending, setIsSending] = useState(false)
+  const [timeoutID, setTimeoutID] = useState<number | null>(null)
+
+  function handleSend() {
+    setIsSending(true)
+    setTimeoutID(
+      setTimeout(() => {
+        alert('Отправлено!')
+        setIsSending(false)
+      }, 3000)
+    )
   }
 
-  const handleBackgroundClick = () => {
-    setIsImageActive(false)
+  function handleUndo() {
+    setIsSending(false)
+    if (timeoutID) {
+      clearTimeout(timeoutID)
+    }
   }
 
   return (
-    <div className={`background ${!isImageActive ? 'background--active' : ''}`} onClick={handleBackgroundClick}>
-      <img
-        className={`picture ${isImageActive ? 'picture--active' : ''}`}
-        onClick={handleImageClick}
-        alt="Rainbow houses in Kampung Pelangi, Indonesia"
-        src="https://i.imgur.com/5qwVYb1.jpeg"
-      />
-    </div>
+    <>
+      <input disabled={isSending} value={text} onChange={e => setText(e.target.value)} />
+      <button disabled={isSending} onClick={handleSend}>
+        {isSending ? 'Отправляем...' : 'Отправить'}
+      </button>
+      {isSending && <button onClick={handleUndo}>Отменить</button>}
+    </>
   )
 }
